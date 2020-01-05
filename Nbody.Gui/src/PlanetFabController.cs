@@ -3,8 +3,6 @@ using NBody.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NBody.Gui
 {
@@ -41,7 +39,8 @@ namespace NBody.Gui
                             j.UpdateValue();
                             j.Show();
                         });
-                    } else
+                    }
+                    else
                     {
                         planet.ForEach(j =>
                         {
@@ -50,7 +49,7 @@ namespace NBody.Gui
                     }
                 }
             }
-            else 
+            else
             {
                 foreach (var lab in Planets)
                 {

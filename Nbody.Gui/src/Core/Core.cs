@@ -1,9 +1,9 @@
-﻿using System;
+﻿using MathNet.Numerics.LinearAlgebra;
+using NBody.Gui;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MathNet.Numerics.LinearAlgebra;
-using NBody.Gui;
 
 namespace NBody.Core
 {
@@ -12,13 +12,15 @@ namespace NBody.Core
         public List<Planet> Planets { get; set; }
         private int _lastStep = -1;
         private List<Vector<double>> _oldPositions;
-        public List<Vector<double>> Positions {
-            get {
+        public List<Vector<double>> Positions
+        {
+            get
+            {
                 if (_lastStep == NStep)
                     return _oldPositions;
                 _lastStep = NStep;
                 return _oldPositions = Planets.Select(i => i.Position.Multiply(1)).ToList();
-            } 
+            }
         }
         [PropEdit]
         public double GravitationalConstant;
@@ -26,7 +28,7 @@ namespace NBody.Core
 
         public void Step(int numberOfSteps)
         {
-            while(numberOfSteps-- > 0)
+            while (numberOfSteps-- > 0)
             {
                 Step();
             }

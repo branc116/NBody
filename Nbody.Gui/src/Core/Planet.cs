@@ -1,6 +1,6 @@
-﻿using System;
-using MathNet.Numerics.LinearAlgebra;
+﻿using MathNet.Numerics.LinearAlgebra;
 using NBody.Gui.Extensions;
+using System;
 namespace NBody.Core
 {
     public class Planet
@@ -16,7 +16,7 @@ namespace NBody.Core
             Mass * Math.Pow(Velocity.L2Norm(), 2) / 2;
         public void MegeWith(Planet planet)
         {
-            
+
             Name += $" + {planet.Name}";
             Console.WriteLine(Name);
             var v1 = Velocity;
@@ -26,7 +26,7 @@ namespace NBody.Core
             Console.WriteLine($"v1: {v1.ToStrV3()}, v2: {v2.ToStrV3()}");
             Console.WriteLine($"m1: {mom1.ToStrV3()}, m2: {mom2.ToStrV3()}");
             Console.WriteLine($"M1: {Mass}, M2: {planet.Mass}");
-            Velocity = mom1.Add(mom2).Multiply(1.0/(planet.Mass + Mass)); //Velocity.Multiply(Mass/(planet.Mass + Mass)).Add(planet.Velocity.Multiply(planet.Mass / (planet.Mass + Mass)));
+            Velocity = mom1.Add(mom2).Multiply(1.0 / (planet.Mass + Mass)); //Velocity.Multiply(Mass/(planet.Mass + Mass)).Add(planet.Velocity.Multiply(planet.Mass / (planet.Mass + Mass)));
             Mass += planet.Mass;
         }
         public override string ToString()

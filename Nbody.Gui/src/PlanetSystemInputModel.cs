@@ -1,10 +1,7 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using NBody.Core;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NBody.Gui
 {
@@ -20,7 +17,8 @@ namespace NBody.Gui
             {
                 var json = System.IO.File.ReadAllText(fileName);
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<PlanetSystemInputModel>(json);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return null;
             }

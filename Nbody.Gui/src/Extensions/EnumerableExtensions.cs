@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NBody.Gui.Extensions
 {
@@ -11,7 +9,7 @@ namespace NBody.Gui.Extensions
         public static IEnumerable<T> Log<T>(this IEnumerable<T> src)
         {
             Console.WriteLine($"#{src.Count()} ");
-            foreach(var obj in src)
+            foreach (var obj in src)
             {
                 Console.WriteLine(obj.ToString());
                 yield return obj;

@@ -19,16 +19,16 @@
 
 [sub_resource type="ButtonGroup" id=2]
 
-[sub_resource type="SpatialMaterial" id=4]
+[sub_resource type="SpatialMaterial" id=3]
 next_pass = ExtResource( 3 )
 albedo_color = Color( 0.87451, 0.988235, 0.0901961, 1 )
 
-[sub_resource type="SphereMesh" id=5]
-material = SubResource( 4 )
+[sub_resource type="SphereMesh" id=4]
+material = SubResource( 3 )
 
-[sub_resource type="MultiMesh" id=3]
+[sub_resource type="MultiMesh" id=5]
 transform_format = 1
-mesh = SubResource( 5 )
+mesh = SubResource( 4 )
 
 [sub_resource type="MultiMesh" id=6]
 transform_format = 1
@@ -265,7 +265,7 @@ current_path = "C:/Users/Branimir/source/repos/nbody/Nbody.Gui/"
 script = ExtResource( 8 )
 
 [node name="PlanetSystem" type="MultiMeshInstance" parent="."]
-multimesh = SubResource( 3 )
+multimesh = SubResource( 5 )
 script = ExtResource( 13 )
 
 [node name="PlanetSystemArrows" type="MultiMeshInstance" parent="."]

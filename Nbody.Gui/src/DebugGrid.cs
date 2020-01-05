@@ -1,8 +1,6 @@
 using Godot;
 using NBody.Core;
 using NBody.Gui.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace NBody.Gui
