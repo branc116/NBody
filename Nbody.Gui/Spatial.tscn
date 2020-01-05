@@ -1,19 +1,19 @@
 [gd_scene load_steps=21 format=2]
 
-[ext_resource path="res://src/Nbody.cs" type="Script" id=1]
+[ext_resource path="res://src/Nodes/Controls/DebugPanel.cs" type="Script" id=1]
 [ext_resource path="res://camera_controll.gd" type="Script" id=2]
 [ext_resource path="res://planetShader.tres" type="Material" id=3]
 [ext_resource path="res://models/arrow.obj" type="ArrayMesh" id=4]
-[ext_resource path="res://src/RestartButton.cs" type="Script" id=5]
-[ext_resource path="res://src/DebugGrid.cs" type="Script" id=6]
-[ext_resource path="res://src/DebugPanel.cs" type="Script" id=7]
-[ext_resource path="res://src/PlanetSystemSelected.cs" type="Script" id=8]
-[ext_resource path="res://src/OpenFileDialogButton.cs" type="Script" id=9]
-[ext_resource path="res://src/DebugList.cs" type="Script" id=10]
-[ext_resource path="res://src/ScrollPlanetDebugList.cs" type="Script" id=11]
-[ext_resource path="res://src/PropsEdit.cs" type="Script" id=12]
-[ext_resource path="res://src/PlanetSystemMultyMesh.cs" type="Script" id=13]
-[ext_resource path="res://src/PlanetSystemArrowMultiMesh.cs" type="Script" id=14]
+[ext_resource path="res://src/Nodes/Controls/RestartButton.cs" type="Script" id=5]
+[ext_resource path="res://src/Nodes/Controls/DebugGrid.cs" type="Script" id=6]
+[ext_resource path="res://src/Nodes/Nodes/Nbody.cs" type="Script" id=7]
+[ext_resource path="res://src/Nodes/Controls/PlanetSystemSelected.cs" type="Script" id=8]
+[ext_resource path="res://src/Nodes/Controls/OpenFileDialogButton.cs" type="Script" id=9]
+[ext_resource path="res://src/Nodes/Controls/DebugList.cs" type="Script" id=10]
+[ext_resource path="res://src/Nodes/Controls/ScrollPlanetDebugList.cs" type="Script" id=11]
+[ext_resource path="res://src/Nodes/Controls/PropsEdit.cs" type="Script" id=12]
+[ext_resource path="res://src/Nodes/Spatials/PlanetSystemMultyMesh.cs" type="Script" id=13]
+[ext_resource path="res://src/Nodes/Spatials/PlanetSystemArrowMultiMesh.cs" type="Script" id=14]
 
 [sub_resource type="ButtonGroup" id=1]
 
@@ -35,7 +35,7 @@ transform_format = 1
 mesh = ExtResource( 4 )
 
 [node name="Spatial" type="Spatial"]
-script = ExtResource( 1 )
+script = ExtResource( 7 )
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 0.736745, -0.417058, 0.532231, 0, 0.787125, 0.616794, -0.676171, -0.45442, 0.57991, 10, 10, 20 )
@@ -83,7 +83,7 @@ margin_bottom = 600.0
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource( 7 )
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

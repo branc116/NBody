@@ -9,14 +9,12 @@ namespace NBody.Gui
         // private string b = "text";
 
         // Called when the node enters the scene tree for the first time.
-        private Button ok;
-        private Button cancel;
-        private bool handled = false;
-        private bool init = true;
+        private Button _ok;
+        private bool _handled = false;
+        private bool _init = true;
         public override void _Ready()
         {
-            ok = GetOk();
-            cancel = GetCancel();
+            _ok = GetOk();
         }
         public override void _Process(float delta)
         {
@@ -27,9 +25,9 @@ namespace NBody.Gui
             }
             if (!this.Visible)
                 return;
-            if (ok.Pressed && !handled)
+            if (_ok.Pressed && !_handled)
             {
-                handled = true;
+                _handled = true;
                 var fullPath = System.IO.Path.Combine(base.CurrentDir, base.CurrentFile);
                 Console.WriteLine($"File: {fullPath}");
                 SourceOfTruth.InputFile = fullPath;
@@ -38,7 +36,7 @@ namespace NBody.Gui
             }
             else
             {
-                handled = false;
+                _handled = false;
             }
         }
     }

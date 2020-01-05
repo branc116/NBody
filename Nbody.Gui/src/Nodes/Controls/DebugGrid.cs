@@ -1,5 +1,6 @@
 using Godot;
 using NBody.Core;
+using NBody.Gui.Controllers;
 using NBody.Gui.Extensions;
 using System.Linq;
 

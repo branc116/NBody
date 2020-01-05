@@ -1,72 +1,12 @@
 using Godot;
 using NBody.Core;
 using NBody.Gui;
+using NBody.Gui.Controllers;
 using NBody.Gui.Extensions;
+using NBody.Gui.InputModels;
 
-namespace NBody
+namespace NBody.Gui.Nodes.Spatials
 {
-    public class PlanetModel : Spatial, IPlanetFab
-    {
-        public Planet Planet { get; set; }
-        public PlanetModel(Planet planet, Spatial mesh)
-        {
-            Planet = planet;
-            var m = mesh.Duplicate() as Spatial;
-            var radius = (float)planet.Radius;
-            m.Scale = new Vector3(radius, radius, radius);
-            m.Visible = true;
-            AddChild(m);
-        }
-        public void UpdateValue()
-        {
-            Translation = Planet.Position.ToV3();
-        }
-    }
-    public class PlanetLight : Spatial, IPlanetFab
-    {
-        public Planet Planet { get; set; }
-        public PlanetLight(Spatial lightSpatial)
-        {
-            var light = lightSpatial.Duplicate() as Spatial;
-            this.Visible = false;
-            light.Visible = true;
-            AddChild(light);
-        }
-        public void UpdateValue()
-        {
-
-            if (SourceOfTruth.ShowLights)
-            {
-                Transform = new Transform(Basis.Identity, Planet.Position.ToV3())
-                    .TargetTo2(Planet.Velocity.ToV3().Normalized(), Vector3.Up);
-                this.Visible = true;
-            }
-            else
-            {
-                this.Visible = false;
-            }
-        }
-    }
-    public class PlanetArrow : Spatial, IPlanetFab
-    {
-        public Planet Planet { get; set; }
-        public PlanetArrow(Planet planet, Spatial mesh)
-        {
-            Planet = planet;
-            var m = mesh.Duplicate() as Spatial;
-            var radius = 0.5f;
-            m.Scale = new Vector3(radius, radius, radius);
-            m.Visible = true;
-            AddChild(m);
-        }
-        public void UpdateValue()
-        {
-            Transform = new Transform(Basis.Identity, Planet.Position.ToV3())
-                .TargetTo2(Planet.Velocity.ToV3().Normalized(), Vector3.Up)
-                .Scale2(new Vector3(1f, Mathf.Log(1f + Planet.Velocity.ToV3().LengthSquared()), 1f));
-
-        }
-    }
     public class Nbody : Spatial
     {
         private readonly PlanetFabController _fabController = new PlanetFabController();
@@ -82,8 +22,8 @@ namespace NBody
             _lightSpatial = _lightSpatial is null ? this.GetNode<Spatial>(new NodePath("PlanetLightSpatial")) : _lightSpatial;
             _globalArrow = _globalArrow is null ? _arrowSpatial.Duplicate() as Spatial : _globalArrow;
             AddChild(_globalArrow);
-            var inputModel = Gui.PlanetSystemInputModel
-                .LoadFromFile(Gui.SourceOfTruth.InputFile);
+            var inputModel = PlanetSystemInputModel
+                .LoadFromFile(SourceOfTruth.InputFile);
             if (SourceOfTruth.RestartStepPerFrame)
                 SourceOfTruth.StepsPerFrame = inputModel.StepsPerFrame;
             Gui.SourceOfTruth.System = inputModel

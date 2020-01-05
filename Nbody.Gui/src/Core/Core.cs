@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using NBody.Gui;
+using NBody.Gui.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

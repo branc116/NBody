@@ -52,25 +52,32 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Attributes\ButtonCommandAttribute.cs" />
+    <Compile Include="src\Attributes\PropEditAttribute.cs" />
+    <Compile Include="src\Controllers\ButtonCommandController.cs" />
+    <Compile Include="src\Controllers\DebugController.cs" />
+    <Compile Include="src\Controllers\PlanetFabController.cs" />
     <Compile Include="src\Core\Core.cs" />
     <Compile Include="src\Core\Planet.cs" />
-    <Compile Include="src\DebugGrid.cs" />
-    <Compile Include="src\DebugList.cs" />
-    <Compile Include="src\DebugPanel.cs" />
     <Compile Include="src\Extensions\EnumerableExtensions.cs" />
     <Compile Include="src\Extensions\VectorExtensions.cs" />
+    <Compile Include="src\InputModels\PlanetSystemInputModel.cs" />
     <Compile Include="src\IPlanetFab.cs" />
-    <Compile Include="src\Nbody.cs" />
+    <Compile Include="src\Nodes\Controls\DebugGrid.cs" />
+    <Compile Include="src\Nodes\Controls\DebugList.cs" />
+    <Compile Include="src\Nodes\Controls\DebugPanel.cs" />
+    <Compile Include="src\Nodes\Controls\PlanetSystemSelected.cs" />
+    <Compile Include="src\Nodes\Controls\PropsEdit.cs" />
+    <Compile Include="src\Nodes\Controls\ScrollPlanetDebugList.cs" />
+    <Compile Include="src\Nodes\Spatials\Nbody.cs" />
+    <Compile Include="src\Nodes\Spatials\PlanetArrow.cs" />
+    <Compile Include="src\Nodes\Spatials\PlanetLight.cs" />
+    <Compile Include="src\Nodes\Spatials\PlanetModel.cs" />
+    <Compile Include="src\Nodes\Spatials\PlanetSystemArrowMultiMesh.cs" />
+    <Compile Include="src\Nodes\Spatials\PlanetSystemMultyMesh.cs" />
     <Compile Include="src\OpenFileDialogButton.cs" />
-    <Compile Include="src\PlanetFabController.cs" />
-    <Compile Include="src\PlanetSystemArrowMultiMesh.cs" />
-    <Compile Include="src\PlanetSystemInputModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\PlanetSystemMultyMesh.cs" />
-    <Compile Include="src\PlanetSystemSelected.cs" />
-    <Compile Include="src\PropsEdit.cs" />
     <Compile Include="src\RestartButton.cs" />
-    <Compile Include="src\ScrollPlanetDebugList.cs" />
     <Compile Include="src\SourceOfTruth.cs" />
   </ItemGroup>
   <ItemGroup>

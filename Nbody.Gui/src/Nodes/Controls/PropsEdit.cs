@@ -1,4 +1,5 @@
 using Godot;
+using NBody.Gui.Attributes;
 using NBody.Gui.Extensions;
 using System;
 using System.Collections.Generic;
@@ -135,10 +136,6 @@ namespace NBody.Gui
             //Text = _oldText = _fieldInfo.GetValue(_obj).ToString();
             PropToText();
         }
-    }
-    public class PropEditAttribute : System.Attribute
-    {
-
     }
     public class PropsEdit : GridContainer
     {

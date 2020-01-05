@@ -1,4 +1,6 @@
-﻿namespace NBody.Gui
+﻿using NBody.Gui.Attributes;
+
+namespace NBody.Gui
 {
     public static class SourceOfTruth
     {

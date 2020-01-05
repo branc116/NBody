@@ -3,7 +3,7 @@ using NBody.Core;
 using System;
 using System.Linq;
 
-namespace NBody.Gui
+namespace NBody.Gui.InputModels
 {
     public class PlanetSystemInputModel
     {
