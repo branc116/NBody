@@ -1,0 +1,21 @@
+[gd_resource type="SpatialMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://media/2k_sun.jpg" type="Texture" id=1]
+
+[resource]
+albedo_texture = ExtResource( 1 )
+emission_enabled = true
+emission = Color( 0.0666667, 0.219608, 0.0235294, 1 )
+emission_energy = 1.76
+emission_operator = 0
+emission_on_uv2 = true
+normal_enabled = true
+normal_scale = -0.72
+normal_texture = ExtResource( 1 )
+subsurf_scatter_enabled = true
+subsurf_scatter_strength = 0.8
+subsurf_scatter_texture = ExtResource( 1 )
+refraction_enabled = true
+refraction_scale = 0.05
+refraction_texture = ExtResource( 1 )
+refraction_texture_channel = 0

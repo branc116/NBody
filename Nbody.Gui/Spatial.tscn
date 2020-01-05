@@ -1,0 +1,273 @@
+[gd_scene load_steps=21 format=2]
+
+[ext_resource path="res://src/Nbody.cs" type="Script" id=1]
+[ext_resource path="res://camera_controll.gd" type="Script" id=2]
+[ext_resource path="res://planetShader.tres" type="Material" id=3]
+[ext_resource path="res://models/arrow.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://src/RestartButton.cs" type="Script" id=5]
+[ext_resource path="res://src/DebugGrid.cs" type="Script" id=6]
+[ext_resource path="res://src/DebugPanel.cs" type="Script" id=7]
+[ext_resource path="res://src/PlanetSystemSelected.cs" type="Script" id=8]
+[ext_resource path="res://src/OpenFileDialogButton.cs" type="Script" id=9]
+[ext_resource path="res://src/DebugList.cs" type="Script" id=10]
+[ext_resource path="res://src/ScrollPlanetDebugList.cs" type="Script" id=11]
+[ext_resource path="res://src/PropsEdit.cs" type="Script" id=12]
+[ext_resource path="res://src/PlanetSystemMultyMesh.cs" type="Script" id=13]
+[ext_resource path="res://src/PlanetSystemArrowMultiMesh.cs" type="Script" id=14]
+
+[sub_resource type="ButtonGroup" id=1]
+
+[sub_resource type="ButtonGroup" id=2]
+
+[sub_resource type="SpatialMaterial" id=4]
+next_pass = ExtResource( 3 )
+albedo_color = Color( 0.87451, 0.988235, 0.0901961, 1 )
+
+[sub_resource type="SphereMesh" id=5]
+material = SubResource( 4 )
+
+[sub_resource type="MultiMesh" id=3]
+transform_format = 1
+mesh = SubResource( 5 )
+
+[sub_resource type="MultiMesh" id=6]
+transform_format = 1
+mesh = ExtResource( 4 )
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 0.736745, -0.417058, 0.532231, 0, 0.787125, 0.616794, -0.676171, -0.45442, 0.57991, 10, 10, 20 )
+far = 200000.0
+script = ExtResource( 2 )
+pitch_limit = 80
+max_speed = Vector3( 100, 100, 100 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( -0.637582, 0.0275111, 0.769892, -0.00167276, 0.99931, -0.0370944, -0.770381, -0.0249385, -0.637096, 3.17719, 4.29856, 0 )
+light_energy = 7.46
+light_indirect_energy = 5.69
+shadow_enabled = true
+
+[node name="Spatial" type="Spatial" parent="."]
+visible = false
+
+[node name="Planet" type="CSGSphere" parent="Spatial"]
+layers = 2
+material = ExtResource( 3 )
+
+[node name="ArrowSpatial" type="Spatial" parent="."]
+visible = false
+
+[node name="ArrowModel" type="CSGMesh" parent="ArrowSpatial"]
+transform = Transform( 0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 2, 0 )
+mesh = ExtResource( 4 )
+
+[node name="PlanetLightSpatial" type="Spatial" parent="."]
+visible = false
+
+[node name="PlanetLight" type="SpotLight" parent="PlanetLightSpatial"]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0 )
+light_energy = 12.46
+light_indirect_energy = 2.03
+spot_range = 17.8
+spot_angle = 79.2
+spot_angle_attenuation = 0.554785
+
+[node name="Panel" type="Panel" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -511.0
+margin_bottom = 600.0
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="Panel"]
+anchor_right = 1.0
+margin_right = -18.0
+margin_bottom = 120.0
+rect_clip_content = true
+focus_neighbour_bottom = NodePath("../Button")
+custom_constants/vseparation = 3
+columns = 5
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false,
+"_editor_description_": "this is the end
+"
+}
+
+[node name="Planet" type="Label" parent="Panel/GridContainer"]
+margin_right = 95.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "Planet"
+
+[node name="Label2" type="Label" parent="Panel/GridContainer"]
+margin_left = 99.0
+margin_right = 194.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "Pozicija"
+
+[node name="Label3" type="Label" parent="Panel/GridContainer"]
+margin_left = 198.0
+margin_right = 293.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "Brzina"
+
+[node name="Label4" type="Label" parent="Panel/GridContainer"]
+margin_left = 297.0
+margin_right = 392.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "KE"
+
+[node name="Label5" type="Label" parent="Panel/GridContainer"]
+margin_left = 396.0
+margin_right = 491.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "KG"
+
+[node name="ItemList" type="ItemList" parent="Panel"]
+anchor_left = 0.004
+anchor_top = 0.553
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -0.0440001
+margin_top = 0.199982
+margin_right = 2.0
+margin_bottom = -1.0
+script = ExtResource( 10 )
+
+[node name="VScrollBar" type="VScrollBar" parent="Panel"]
+anchor_right = 1.0
+margin_left = 497.0
+margin_top = 10.0
+margin_right = -2.0
+margin_bottom = 113.0
+step = 1.0
+script = ExtResource( 11 )
+
+[node name="Panel" type="Panel" parent="Panel"]
+anchor_left = 0.004
+anchor_top = 0.247
+anchor_right = 0.994
+anchor_bottom = 0.55
+margin_left = -0.0440001
+margin_top = 2.8
+margin_right = 0.065979
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RestartButton" type="Button" parent="Panel/Panel"]
+anchor_top = 0.2
+anchor_bottom = 0.2
+margin_left = -1.25153
+margin_top = -45.0256
+margin_right = 64.7485
+margin_bottom = -25.0256
+focus_neighbour_top = NodePath("../GridContainer")
+group = SubResource( 1 )
+text = "Restart"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PauseResume" type="Button" parent="Panel/Panel"]
+anchor_top = 0.2
+anchor_bottom = 0.2
+margin_left = 70.0
+margin_top = -45.0256
+margin_right = 110.0
+margin_bottom = -25.0256
+focus_neighbour_top = NodePath("../GridContainer")
+group = SubResource( 2 )
+text = "Pause"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PauseResume2" type="Button" parent="Panel/Panel"]
+anchor_top = 0.2
+anchor_bottom = 0.2
+margin_left = 150.0
+margin_top = -45.0256
+margin_right = 200.0
+margin_bottom = -25.0256
+focus_neighbour_top = NodePath("../GridContainer")
+group = SubResource( 2 )
+text = "Step"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PauseResume3" type="Button" parent="Panel/Panel"]
+anchor_top = 0.2
+anchor_bottom = 0.2
+margin_left = 205.0
+margin_top = -45.0256
+margin_right = 257.0
+margin_bottom = -25.0256
+focus_neighbour_top = NodePath("../GridContainer")
+group = SubResource( 2 )
+text = "NSteps"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OpenPlanetSystem" type="Button" parent="Panel/Panel"]
+anchor_left = 1.0
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 0.2
+margin_left = -87.6124
+margin_top = -45.5593
+margin_right = 3.0
+margin_bottom = -25.5593
+text = "Open"
+script = ExtResource( 9 )
+
+[node name="PropsEditGrid" type="GridContainer" parent="Panel/Panel"]
+anchor_top = 0.106
+anchor_right = 0.998
+anchor_bottom = 1.0
+margin_top = 0.0259991
+margin_right = 0.0119934
+script = ExtResource( 12 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FileDialog" type="FileDialog" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+window_title = "Open a File"
+resizable = true
+mode = 0
+access = 2
+show_hidden_files = true
+current_dir = "C:/Users/Branimir/source/repos/nbody/Nbody.Gui"
+current_path = "C:/Users/Branimir/source/repos/nbody/Nbody.Gui/"
+script = ExtResource( 8 )
+
+[node name="PlanetSystem" type="MultiMeshInstance" parent="."]
+multimesh = SubResource( 3 )
+script = ExtResource( 13 )
+
+[node name="PlanetSystemArrows" type="MultiMeshInstance" parent="."]
+multimesh = SubResource( 6 )
+script = ExtResource( 14 )
