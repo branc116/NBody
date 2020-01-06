@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nbody.Gui", "Nbody.Gui.cspr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nbody.Godot.Run", "..\Nbody.Godot.Run\Nbody.Godot.Run.csproj", "{E96507D6-BA49-4AA9-9E80-AB7B59BE9019}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nbody.Tests", "..\Nbody.Tests\Nbody.Tests.csproj", "{F60D26E6-9D4F-4B0D-A498-87900FD0F60E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,12 @@ Global
 		{E96507D6-BA49-4AA9-9E80-AB7B59BE9019}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E96507D6-BA49-4AA9-9E80-AB7B59BE9019}.Tools|Any CPU.ActiveCfg = Debug|Any CPU
 		{E96507D6-BA49-4AA9-9E80-AB7B59BE9019}.Tools|Any CPU.Build.0 = Debug|Any CPU
+		{F60D26E6-9D4F-4B0D-A498-87900FD0F60E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F60D26E6-9D4F-4B0D-A498-87900FD0F60E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F60D26E6-9D4F-4B0D-A498-87900FD0F60E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F60D26E6-9D4F-4B0D-A498-87900FD0F60E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F60D26E6-9D4F-4B0D-A498-87900FD0F60E}.Tools|Any CPU.ActiveCfg = Release|Any CPU
+		{F60D26E6-9D4F-4B0D-A498-87900FD0F60E}.Tools|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

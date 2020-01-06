@@ -1,4 +1,5 @@
-﻿using NBody.Gui.Attributes;
+﻿using Godot;
+using NBody.Gui.Attributes;
 
 namespace NBody.Gui
 {
@@ -19,5 +20,12 @@ namespace NBody.Gui
         [PropEdit]
         public static int DebugPlanetListScrollValue = 0;
         public static bool Paused = false;
+        [PropEdit]
+        public static int MaxHistoy = 10;
+
+        public static Vector2 PlotCenter = Vector2.Zero;
+        public static Vector2 PlotOffset;
+        public static float PlotWidth = 3f;
+        public static Vector2 PlotResoultion;
     }
 }

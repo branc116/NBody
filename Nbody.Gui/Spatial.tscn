@@ -1,23 +1,103 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://src/Nodes/Controls/DebugPanel.cs" type="Script" id=1]
 [ext_resource path="res://camera_controll.gd" type="Script" id=2]
 [ext_resource path="res://planetShader.tres" type="Material" id=3]
 [ext_resource path="res://models/arrow.obj" type="ArrayMesh" id=4]
-[ext_resource path="res://src/Nodes/Controls/RestartButton.cs" type="Script" id=5]
+[ext_resource path="res://src/Nodes/Controls/ControlledButton.cs" type="Script" id=5]
 [ext_resource path="res://src/Nodes/Controls/DebugGrid.cs" type="Script" id=6]
-[ext_resource path="res://src/Nodes/Nodes/Nbody.cs" type="Script" id=7]
+[ext_resource path="res://src/Nodes/Spatials/Nbody.cs" type="Script" id=7]
 [ext_resource path="res://src/Nodes/Controls/PlanetSystemSelected.cs" type="Script" id=8]
-[ext_resource path="res://src/Nodes/Controls/OpenFileDialogButton.cs" type="Script" id=9]
+[ext_resource path="res://src/Nodes/Controls/GraphContainer.cs" type="Script" id=9]
 [ext_resource path="res://src/Nodes/Controls/DebugList.cs" type="Script" id=10]
 [ext_resource path="res://src/Nodes/Controls/ScrollPlanetDebugList.cs" type="Script" id=11]
 [ext_resource path="res://src/Nodes/Controls/PropsEdit.cs" type="Script" id=12]
 [ext_resource path="res://src/Nodes/Spatials/PlanetSystemMultyMesh.cs" type="Script" id=13]
 [ext_resource path="res://src/Nodes/Spatials/PlanetSystemArrowMultiMesh.cs" type="Script" id=14]
+[ext_resource path="res://src/Nodes/Controls/LinesDrawer.cs" type="Script" id=15]
 
 [sub_resource type="ButtonGroup" id=1]
 
 [sub_resource type="ButtonGroup" id=2]
+
+[sub_resource type="Shader" id=7]
+code = "shader_type canvas_item;
+//render_mode skip_vertex_transform;
+uniform vec2 offset;
+uniform vec2 center;
+uniform vec2 resolution;
+uniform float width;
+uniform float modNum;
+//void vertex() {
+//    vec2 xxx =  resolution / 2f;
+//    float aspect = resolution.x / resolution.y;
+//    vec2 z = vec2(width / resolution.x, (width / aspect) / resolution.y);
+//    VERTEX = center + ((xxx - vec2(-offset.x, offset.y) - VERTEX.xy) * mat2(vec2(z.x, 0), vec2(0, z.y)) );
+//}
+void fragment() {
+    vec2 xxx =  resolution / 2f;
+    float aspect = resolution.x / resolution.y;
+    float mn = modNum;
+    vec2 z = vec2(width / resolution.x, (width / aspect) / resolution.y);
+    float off = 1f;
+    vec2 fo =   center + ((xxx - vec2(-offset.x, offset.y) - FRAGCOORD.xy) * mat2(vec2(z.x, 0), vec2(0, z.y)) );
+    float fol =  abs(mod((center + ((xxx - vec2(-offset.x, offset.y) - FRAGCOORD.xy - vec2(-off, 0)) * mat2(vec2(z.x, 0), vec2(0, z.y)))).x, mn));
+    float foor = abs(mod((center + ((xxx - vec2(-offset.x, offset.y) - FRAGCOORD.xy - vec2(off, 0)) * mat2(vec2(z.x, 0), vec2(0, z.y)))).x, mn));
+    float fot =  abs(mod((center + ((xxx - vec2(-offset.x, offset.y) - FRAGCOORD.xy - vec2(0, off)) * mat2(vec2(z.x, 0), vec2(0, z.y)))).y, mn));
+    float fob =  abs(mod((center + ((xxx - vec2(-offset.x, offset.y) - FRAGCOORD.xy - vec2(0, -off)) * mat2(vec2(z.x, 0), vec2(0, z.y)))).y, mn));
+    
+//    vec2 zzz = vec2(mix(vec2(0, SCREEN_PIXEL_SIZE.x), vec2(width, width), FRAGCOORD.x), mix(vec2(0, SCREEN_PIXEL_SIZE.y), vec2(-1, 1), FRAGCOORD.y));
+    float to = 0.004;
+    COLOR = vec4(1, 1, 1, 1);
+//    if (abs(mod(fo.x, mn)) < to*width || abs(mod(fo.y, mn)) < to*width/aspect) {
+        float curx = abs(mod(fo.x, mn));
+        float cury = abs(mod(fo.y, mn));
+        if (curx <= fol && curx <= foor || cury <= fot && cury <= fob){
+            float b = min(abs(mod(fo.x, mn)), abs(mod(fo.y, mn)));
+            b = 0.5f; //2f - exp(b/(0.005*width));
+            COLOR = vec4(b, b, b, 1f);    
+//        }
+    }
+    if (abs(mod(fo.x, mn*5f)) < 0.005*width || abs(mod(fo.y, mn*5f)) < 0.005*width/aspect) {
+        COLOR = vec4(0, 0, 0, 1);
+    }
+    if (abs(fo.x) < 0.005*width || abs(fo.y) < 0.005*width/aspect) {
+        COLOR = vec4(1, 0, 0, 1);
+    }
+//    for(int i =0;i<NPoints;i++) {
+//        vec4 p = texelFetch(points, ivec2(i, 0), 1);
+//        vec3 k = vec3(p.r - p.b, p.g - p.a, 1);
+////        float g = fo * k;
+//    }
+}"
+
+[sub_resource type="ShaderMaterial" id=8]
+shader = SubResource( 7 )
+shader_param/offset = null
+shader_param/center = Vector2( 0, 0 )
+shader_param/resolution = Vector2( 771, 528 )
+shader_param/width = 2.0
+shader_param/modNum = 1.0
+
+[sub_resource type="Shader" id=9]
+code = "shader_type canvas_item;
+uniform vec2 offset;
+uniform vec2 center;
+uniform vec2 resolution;
+uniform float width;
+
+void vertex() {
+    vec2 xxx =  resolution / 2f;
+    float aspect = resolution.x / resolution.y;
+    vec2 z = vec2(width / resolution.x, (width / aspect) / resolution.y);
+    mat2 scale =mat2(vec2(z.x, 0), vec2(0, z.y));
+//    VERTEX = center + ((xxx - vec2(-offset.x, offset.y) - VERTEX.xy) * mat2(vec2(z.x, 0), vec2(0, z.y)) );
+    VERTEX += (xxx + vec2(offset.x, offset.y) * scale;
+//    POINT_SIZE = 10f;
+}"
+
+[sub_resource type="ShaderMaterial" id=10]
+shader = SubResource( 9 )
 
 [sub_resource type="SpatialMaterial" id=3]
 next_pass = ExtResource( 3 )
@@ -76,6 +156,147 @@ spot_angle = 79.2
 spot_angle_attenuation = 0.554785
 
 [node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 2.0
+margin_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ItemList" type="ItemList" parent="Panel"]
+anchor_right = 0.241
+anchor_bottom = 0.998
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -0.266006
+margin_bottom = 0.201965
+
+[node name="ControllButtons" type="Panel" parent="Panel"]
+anchor_left = 0.24
+anchor_right = 0.24
+margin_left = -0.240005
+margin_top = 3.0
+margin_right = 775.76
+margin_bottom = 43.0
+
+[node name="Restart" type="Button" parent="Panel/ControllButtons"]
+anchor_top = 0.2
+anchor_bottom = 0.2
+margin_left = 22.4485
+margin_top = 0.178177
+margin_right = 88.4485
+margin_bottom = 20.1782
+focus_neighbour_top = NodePath("../GridContainer")
+group = SubResource( 1 )
+text = "Restart"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Pause" type="Button" parent="Panel/ControllButtons"]
+anchor_top = 0.2
+anchor_bottom = 0.2
+margin_left = 93.7
+margin_top = 0.178177
+margin_right = 143.7
+margin_bottom = 20.1782
+focus_neighbour_top = NodePath("../GridContainer")
+group = SubResource( 2 )
+text = "Pause"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Step" type="Button" parent="Panel/ControllButtons"]
+anchor_top = 0.2
+anchor_bottom = 0.2
+margin_left = 377.757
+margin_top = -1.18221
+margin_right = 427.757
+margin_bottom = 18.8178
+focus_neighbour_top = NodePath("../GridContainer")
+group = SubResource( 2 )
+text = "Step"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NSteps" type="Button" parent="Panel/ControllButtons"]
+anchor_top = 0.2
+anchor_bottom = 0.2
+margin_left = 432.757
+margin_top = -1.18221
+margin_right = 489.757
+margin_bottom = 18.8178
+focus_neighbour_top = NodePath("../GridContainer")
+group = SubResource( 2 )
+text = "NSteps"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Open" type="Button" parent="Panel/ControllButtons"]
+anchor_left = 1.0
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 0.2
+margin_left = -101.964
+margin_top = -1.71591
+margin_right = -11.3514
+margin_bottom = 18.2841
+text = "Open"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Close" type="Button" parent="Panel/ControllButtons"]
+anchor_left = 1.0
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 0.2
+margin_left = -202.632
+margin_top = -1.71591
+margin_right = -112.019
+margin_bottom = 18.2841
+text = "Close"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GraphContainer" type="PanelContainer" parent="Panel"]
+material = SubResource( 8 )
+anchor_left = 0.247
+anchor_top = 0.113
+anchor_right = 0.998
+anchor_bottom = 0.992
+margin_left = -0.422012
+margin_top = 0.086998
+margin_right = 0.052002
+margin_bottom = -0.192017
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Node2D" type="Node2D" parent="Panel/GraphContainer"]
+position = Vector2( 385.129, 274.53 )
+scale = Vector2( 30, -30 )
+
+[node name="Lines" type="Line2D" parent="Panel/GraphContainer"]
+material = SubResource( 10 )
+points = PoolVector2Array( 0, 0, 1, 1 )
+default_color = Color( 0, 0, 0, 1 )
+script = ExtResource( 15 )
+
+[node name="DebugPanel" type="Panel" parent="."]
+visible = false
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -511.0
@@ -88,7 +309,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GridContainer" type="GridContainer" parent="Panel"]
+[node name="GridContainer" type="GridContainer" parent="DebugPanel"]
 anchor_right = 1.0
 margin_right = -18.0
 margin_bottom = 120.0
@@ -103,41 +324,41 @@ __meta__ = {
 "
 }
 
-[node name="Planet" type="Label" parent="Panel/GridContainer"]
+[node name="Planet" type="Label" parent="DebugPanel/GridContainer"]
 margin_right = 95.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "Planet"
 
-[node name="Label2" type="Label" parent="Panel/GridContainer"]
+[node name="Label2" type="Label" parent="DebugPanel/GridContainer"]
 margin_left = 99.0
 margin_right = 194.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "Pozicija"
 
-[node name="Label3" type="Label" parent="Panel/GridContainer"]
+[node name="Label3" type="Label" parent="DebugPanel/GridContainer"]
 margin_left = 198.0
 margin_right = 293.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "Brzina"
 
-[node name="Label4" type="Label" parent="Panel/GridContainer"]
+[node name="Label4" type="Label" parent="DebugPanel/GridContainer"]
 margin_left = 297.0
 margin_right = 392.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "KE"
 
-[node name="Label5" type="Label" parent="Panel/GridContainer"]
+[node name="Label5" type="Label" parent="DebugPanel/GridContainer"]
 margin_left = 396.0
 margin_right = 491.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "KG"
 
-[node name="ItemList" type="ItemList" parent="Panel"]
+[node name="ItemList" type="ItemList" parent="DebugPanel"]
 anchor_left = 0.004
 anchor_top = 0.553
 anchor_right = 1.0
@@ -148,7 +369,7 @@ margin_right = 2.0
 margin_bottom = -1.0
 script = ExtResource( 10 )
 
-[node name="VScrollBar" type="VScrollBar" parent="Panel"]
+[node name="VScrollBar" type="VScrollBar" parent="DebugPanel"]
 anchor_right = 1.0
 margin_left = 497.0
 margin_top = 10.0
@@ -157,7 +378,7 @@ margin_bottom = 113.0
 step = 1.0
 script = ExtResource( 11 )
 
-[node name="Panel" type="Panel" parent="Panel"]
+[node name="Panel" type="Panel" parent="DebugPanel"]
 anchor_left = 0.004
 anchor_top = 0.247
 anchor_right = 0.994
@@ -169,7 +390,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RestartButton" type="Button" parent="Panel/Panel"]
+[node name="Restart" type="Button" parent="DebugPanel/Panel"]
 anchor_top = 0.2
 anchor_bottom = 0.2
 margin_left = -1.25153
@@ -184,12 +405,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PauseResume" type="Button" parent="Panel/Panel"]
+[node name="Pause" type="Button" parent="DebugPanel/Panel"]
 anchor_top = 0.2
 anchor_bottom = 0.2
 margin_left = 70.0
 margin_top = -45.0256
-margin_right = 110.0
+margin_right = 120.0
 margin_bottom = -25.0256
 focus_neighbour_top = NodePath("../GridContainer")
 group = SubResource( 2 )
@@ -199,7 +420,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PauseResume2" type="Button" parent="Panel/Panel"]
+[node name="Step" type="Button" parent="DebugPanel/Panel"]
 anchor_top = 0.2
 anchor_bottom = 0.2
 margin_left = 150.0
@@ -214,12 +435,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PauseResume3" type="Button" parent="Panel/Panel"]
+[node name="NSteps" type="Button" parent="DebugPanel/Panel"]
 anchor_top = 0.2
 anchor_bottom = 0.2
 margin_left = 205.0
 margin_top = -45.0256
-margin_right = 257.0
+margin_right = 262.0
 margin_bottom = -25.0256
 focus_neighbour_top = NodePath("../GridContainer")
 group = SubResource( 2 )
@@ -229,19 +450,22 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="OpenPlanetSystem" type="Button" parent="Panel/Panel"]
+[node name="Open" type="Button" parent="DebugPanel/Panel"]
 anchor_left = 1.0
 anchor_top = 0.2
 anchor_right = 1.0
 anchor_bottom = 0.2
-margin_left = -87.6124
+margin_left = -88.7205
 margin_top = -45.5593
-margin_right = 3.0
+margin_right = 1.89197
 margin_bottom = -25.5593
 text = "Open"
-script = ExtResource( 9 )
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="PropsEditGrid" type="GridContainer" parent="Panel/Panel"]
+[node name="PropsEditGrid" type="GridContainer" parent="DebugPanel/Panel"]
 anchor_top = 0.106
 anchor_right = 0.998
 anchor_bottom = 1.0
