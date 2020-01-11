@@ -34,9 +34,10 @@ namespace Nbody.Gui.src.Controllers
         {
             SourceOfTruth.System.Step(SourceOfTruth.StepsPerFrame);
         }
+        [ButtonCommand(Name ="Open")]
         public void OpenFileDialog(Node node)
         {
-            SourceOfTruth.System.Step(SourceOfTruth.StepsPerFrame);
+            SourceOfTruth.ShowOpenPlanetSystemDialog = true;
         }
     }
 }

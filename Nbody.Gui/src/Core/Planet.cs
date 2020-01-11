@@ -1,9 +1,11 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using Nbody.Gui.src.Extensions;
 using NBody.Gui;
 using NBody.Gui.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NBody.Core
 {
@@ -42,18 +44,12 @@ namespace NBody.Core
         {
             var len = Math.Min(_lenght, _max);
             var cur = _position - len;
-            while(len-- > 0)
+            while (len-- > 0)
             {
                 if (cur < 0) cur += _max;
                 yield return _coll[cur];
                 cur++; cur %= _max;
             }
-            //for(int i = _position - _lenght; i < _position;i++)
-            //{
-            //    var index = i % _max;
-            //    index = index < 0 ? index + _max : index;
-            //    yield return _coll[index];
-            //}
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -66,8 +62,11 @@ namespace NBody.Core
         private CircularArray<Vector<double>> _position = new CircularArray<Vector<double>>(SourceOfTruth.MaxHistoy);
         private CircularArray<Vector<double>> _velocity = new CircularArray<Vector<double>>(SourceOfTruth.MaxHistoy);
 
-        public Vector<double> Position { get => _position.Last(); set => _position.Add(value); }
-        public Vector<double> Velocity { get => _velocity.Last(); set => _velocity.Add(value); }
+        public Vector<double> Position { get => _position.Last(); set => _position.Add(value.Clone()); }
+        public Vector<double> Velocity { get => _velocity.Last(); set => _velocity.Add(value.Clone()); }
+        public int Steps => _position.Position;
+        public IEnumerable<Vector<double>> PositionHistory => _position.Select(i => i);
+        public IEnumerable<Vector<double>> VelocityHistory => _velocity.Select(i => i);
         public double Mass { get; set; }
         public double Radius { get; set; }
         public string Name { get; set; }
@@ -84,6 +83,23 @@ namespace NBody.Core
             var mom2 = v2.Multiply(planet.Mass);
             Velocity = mom1.Add(mom2).Multiply(1.0 / (planet.Mass + Mass));
             Mass += planet.Mass;
+        }
+        /// <summary>
+        /// L1 point for the pair of planets planet.Mass > Mass;
+        /// </summary>
+        /// <param name="planet"><see cref="Planet.Mass"/> > <see cref="Mass"></see>/></param>
+        /// <returns></returns>
+        public Vector<double> L1(Planet planet)
+        {
+            if (Mass > planet.Mass)
+                return planet.L1(this);
+            var diff =  Position - planet.Position;
+            var R = diff.L2Norm();
+            double M1 = planet.Mass, M2 = Mass, rinit = R / Math.Pow(M2 / (3 * M1), 1 / 3.0);
+            Func<double, double> func = (distance) => M2 / (distance * distance) + M1 / (R * R) - distance * (M1 + M2) / (R * R * R) - M1 / Math.Pow(R - distance, 2);
+            var r = func.NumericSolver(rinit);
+            var point = diff.Normalize(2).Multiply(r).Add(Position);
+            return point;
         }
         public override string ToString()
         {

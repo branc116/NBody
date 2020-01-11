@@ -1,11 +1,17 @@
 using Godot;
+using Nbody.Gui.InputModels;
 using NBody.Gui;
 using System;
 
 public class GraphContainer : PanelContainer
 {
+    private readonly PlotsModel _plotsModel = SourceOfTruth.PlotModel;
+    private Panel _parent;
     public override void _Ready()
     {
+        base._Ready();
+        _parent = GetParent<Panel>();
+        _parent.Visible = _plotsModel.PlotVisible;
     }
     public override void _GuiInput(InputEvent @event)
     {
@@ -13,7 +19,7 @@ public class GraphContainer : PanelContainer
         if (@event is InputEventMouseMotion iem && iem.ButtonMask == 1)
         {
             var width = SourceOfTruth.PlotWidth;
-            SourceOfTruth.PlotCenter -= iem.Relative/(new Vector2(-RectSize.x/width, RectSize.y/(width/(RectSize.x/RectSize.y))));
+            SourceOfTruth.PlotCenter -= iem.Relative / (new Vector2(-RectSize.x / width, RectSize.y / (width / (RectSize.x / RectSize.y))));
         }
         if (@event is InputEventMouseButton iemb && (iemb.ButtonMask == 8 || iemb.ButtonMask == 16))
         {
@@ -25,12 +31,13 @@ public class GraphContainer : PanelContainer
         base._UnhandledKeyInput(@event);
         if (!@event.IsPressed() && @event.AsText() == "P")
         {
-            var parent = GetParent<Panel>();
-            parent.Visible = !parent.Visible;
+            _plotsModel.PlotVisible = _parent.Visible = !_parent.Visible;
         }
     }
     public override void _Process(float delta)
     {
+        if (!_plotsModel.PlotVisible)
+            return;
         SourceOfTruth.PlotOffset = RectPosition;
         SourceOfTruth.PlotResoultion = base.RectSize;
         (base.Material as ShaderMaterial).SetShaderParam("center", SourceOfTruth.PlotCenter);
@@ -42,7 +49,6 @@ public class GraphContainer : PanelContainer
     public override void _Draw()
     {
         base._Draw();
-        //DrawLine(new Vector2(0f, 0f), new Vector2(1f, 1f), Color.Color8(0,0,0));
         VisualServer.CanvasItemSetClip(GetCanvasItem(), true);
     }
 }

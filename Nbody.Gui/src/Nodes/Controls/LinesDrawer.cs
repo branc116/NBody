@@ -1,5 +1,10 @@
 ﻿using Godot;
+using Nbody.Gui.InputModels;
+using Nbody.Gui.src.Nodes.Controls;
+using NBody.Core;
 using NBody.Gui;
+using NBody.Gui.Extensions;
+using NBody.Gui.Nodes.Spatials;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,22 +13,33 @@ using System.Threading.Tasks;
 
 namespace Nbody.Gui.Nodes.Controls
 {
-    public class LinesDrawer : Node2D
+    public class LinesDrawer : Node2D   
     {
+        private readonly PlotsModel _plotsModel = SourceOfTruth.PlotModel;
+        private readonly FunctionsManager _functionsManager = new FunctionsManager();
+        private Vector2[] _points;
         public override void _Process(float delta)
         {
             base._Process(delta);
-            (base.Material as ShaderMaterial).SetShaderParam("center", SourceOfTruth.PlotCenter);
-            (base.Material as ShaderMaterial).SetShaderParam("offset", SourceOfTruth.PlotOffset);
-            (base.Material as ShaderMaterial).SetShaderParam("width", SourceOfTruth.PlotWidth);
-            (base.Material as ShaderMaterial).SetShaderParam("resolution", SourceOfTruth.PlotResoultion);
-            
+            if (!_plotsModel.PlotVisible)
+                return;
+            var meteraial = base.Material as ShaderMaterial;
+            meteraial.SetShaderParam("center", SourceOfTruth.PlotCenter);
+            meteraial.SetShaderParam("offset", SourceOfTruth.PlotOffset);
+            meteraial.SetShaderParam("width", SourceOfTruth.PlotWidth);
+            meteraial.SetShaderParam("resolution", SourceOfTruth.PlotResoultion);
+            _points = _functionsManager.GetPoints();
+            if (_points != null && _points.Length > 2)
+                Update();
         }
         public override void _Draw()
         {
-            DrawLine(new Vector2(0f, 0f), new Vector2(500f, 500f), new Color(1f, 0f, 0f));
+            if (_points != null)
+            {
+                DrawPolyline(_points, Color.Color8(0, 0, 0));
+                Console.WriteLine($"MaxX: {_points.Max(i => i.x)} MinX: {_points.Min(i => i.x)}");
+            }
             base._Draw();
-            //VisualServer.CanvasItemSetClip(GetCanvasItem(), true);
         }
     }
 }

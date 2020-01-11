@@ -19,6 +19,14 @@ config/name="Nbody.Gui"
 run/main_scene="res://Spatial.tscn"
 config/icon="res://media/icon.png"
 
+[mono]
+
+debugger_agent/port=56000
+
 [rendering]
 
+limits/buffers/blend_shape_max_buffer_size_kb=40096
+limits/buffers/canvas_polygon_buffer_size_kb=1028
+limits/buffers/canvas_polygon_index_buffer_size_kb=1028
+limits/buffers/immediate_buffer_size_kb=20048
 environment/default_environment="res://default_env.tres"

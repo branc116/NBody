@@ -16,7 +16,7 @@ namespace NBody.Gui.Nodes.Spatials
             m.Visible = true;
             AddChild(m);
         }
-        public void UpdateValue()
+        public void UpdateValue(int index)
         {
             Translation = Planet.Position.ToV3();
         }

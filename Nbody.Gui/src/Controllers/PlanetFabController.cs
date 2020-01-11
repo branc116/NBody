@@ -13,6 +13,15 @@ namespace NBody.Gui.Controllers
         public int progress = 0;
         public Dictionary<string, List<IPlanetFab>> Planets { get; set; } = new Dictionary<string, List<IPlanetFab>>();
         List<string> _planetNames = new List<string>();
+        public Planet this[int i] { get
+            {
+                if (_planetNames.Count <= i)
+                    return null;
+                var key = _planetNames[i];
+                if (!Planets.ContainsKey(key))
+                    return null;
+                return Planets[key].FirstOrDefault()?.Planet;
+            } }
         public void DeleteOld(PlanetSystem system, Node parent)
         {
             Planets.Where(i => !system.HasPlanet(i.Value.First().Planet))
@@ -22,7 +31,12 @@ namespace NBody.Gui.Controllers
                 {
                     Planets[i].ForEach(j => j.QueueFree());
                     Planets.Remove(i);
+                    var index = _planetNames.FindIndex(j => j == i);
                     _planetNames.RemoveAll(j => j == i);
+                    if (parent is ItemList il)
+                    {
+                        il.RemoveItem(index);
+                    } 
                 });
         }
         public void UpdateExisiting(PlanetSystem system, Node parent)
@@ -36,7 +50,7 @@ namespace NBody.Gui.Controllers
                     {
                         planet.ForEach(j =>
                         {
-                            j.UpdateValue();
+                            j.UpdateValue(i);
                             j.Show();
                         });
                     }
@@ -51,9 +65,10 @@ namespace NBody.Gui.Controllers
             }
             else
             {
-                foreach (var lab in Planets)
+                for (int i = 0; i < Planets.Count; i++)
                 {
-                    lab.Value.ForEach(i => i.UpdateValue());
+                    var planets = Planets[_planetNames[i]];
+                    planets.ForEach(j => j.UpdateValue(i));
                 }
             }
         }
@@ -68,7 +83,13 @@ namespace NBody.Gui.Controllers
                     _planetNames.Add(i.Name);
                     newLables.ForEach(j =>
                     {
-                        parent.AddChild(j as Node);
+                        if (parent is ItemList il && j is PlanetLable pl)
+                        {
+                            il.AddItem(pl.Text);
+                            pl.ControlledBy = il;
+                        }
+                        else
+                            parent.AddChild(j as Node);
                     });
                 });
         }

@@ -16,7 +16,7 @@ namespace NBody.Gui.Nodes.Spatials
             m.Visible = true;
             AddChild(m);
         }
-        public void UpdateValue()
+        public void UpdateValue(int index)
         {
             Transform = new Transform(Basis.Identity, Planet.Position.ToV3())
                 .TargetTo2(Planet.Velocity.ToV3().Normalized(), Vector3.Up)

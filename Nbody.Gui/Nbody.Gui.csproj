@@ -53,22 +53,32 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Attributes\ButtonCommandAttribute.cs" />
+    <Compile Include="src\Attributes\PlotFunctionAttribute.cs" />
     <Compile Include="src\Attributes\PropEditAttribute.cs" />
     <Compile Include="src\Controllers\ButtonCommandController.cs" />
     <Compile Include="src\Controllers\DebugController.cs" />
     <Compile Include="src\Controllers\PlanetFabController.cs" />
+    <Compile Include="src\Controllers\PlotFunctionsController.cs" />
     <Compile Include="src\Core\Core.cs" />
     <Compile Include="src\Core\Planet.cs" />
     <Compile Include="src\Extensions\EnumerableExtensions.cs" />
+    <Compile Include="src\Extensions\FunctionExtensions.cs" />
     <Compile Include="src\Extensions\VectorExtensions.cs" />
     <Compile Include="src\InputModels\PlanetSystemInputModel.cs" />
+    <Compile Include="src\InputModels\PlotsModel.cs" />
     <Compile Include="src\IPlanetFab.cs" />
     <Compile Include="src\Nodes\Controls\ControlledButton.cs" />
     <Compile Include="src\Nodes\Controls\DebugGrid.cs" />
     <Compile Include="src\Nodes\Controls\DebugList.cs" />
     <Compile Include="src\Nodes\Controls\DebugPanel.cs" />
+    <Compile Include="src\Nodes\Controls\DynamicLineEdit.cs" />
+    <Compile Include="src\Nodes\Controls\DynamicToggleButton.cs" />
+    <Compile Include="src\Nodes\Controls\FunctionList.cs" />
+    <Compile Include="src\Nodes\Controls\FunctionsManager.cs" />
     <Compile Include="src\Nodes\Controls\GraphContainer.cs" />
     <Compile Include="src\Nodes\Controls\LinesDrawer.cs" />
+    <Compile Include="src\Nodes\Controls\PlanetLable.cs" />
+    <Compile Include="src\Nodes\Controls\PlanetSelectList.cs" />
     <Compile Include="src\Nodes\Controls\PlanetSystemSelected.cs" />
     <Compile Include="src\Nodes\Controls\PropsEdit.cs" />
     <Compile Include="src\Nodes\Controls\ScrollPlanetDebugList.cs" />

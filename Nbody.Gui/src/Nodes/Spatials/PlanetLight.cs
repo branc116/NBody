@@ -14,7 +14,7 @@ namespace NBody.Gui.Nodes.Spatials
             light.Visible = true;
             AddChild(light);
         }
-        public void UpdateValue()
+        public void UpdateValue(int index)
         {
 
             if (SourceOfTruth.ShowLights)

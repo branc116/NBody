@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://src/Nodes/Controls/DebugPanel.cs" type="Script" id=1]
 [ext_resource path="res://camera_controll.gd" type="Script" id=2]
@@ -10,17 +10,18 @@
 [ext_resource path="res://src/Nodes/Controls/PlanetSystemSelected.cs" type="Script" id=8]
 [ext_resource path="res://src/Nodes/Controls/GraphContainer.cs" type="Script" id=9]
 [ext_resource path="res://src/Nodes/Controls/DebugList.cs" type="Script" id=10]
-[ext_resource path="res://src/Nodes/Controls/ScrollPlanetDebugList.cs" type="Script" id=11]
+[ext_resource path="res://src/Nodes/Controls/FunctionList.cs" type="Script" id=11]
 [ext_resource path="res://src/Nodes/Controls/PropsEdit.cs" type="Script" id=12]
 [ext_resource path="res://src/Nodes/Spatials/PlanetSystemMultyMesh.cs" type="Script" id=13]
 [ext_resource path="res://src/Nodes/Spatials/PlanetSystemArrowMultiMesh.cs" type="Script" id=14]
 [ext_resource path="res://src/Nodes/Controls/LinesDrawer.cs" type="Script" id=15]
+[ext_resource path="res://src/Nodes/Controls/PlanetSelectList.cs" type="Script" id=16]
 
 [sub_resource type="ButtonGroup" id=1]
 
 [sub_resource type="ButtonGroup" id=2]
 
-[sub_resource type="Shader" id=7]
+[sub_resource type="Shader" id=3]
 code = "shader_type canvas_item;
 //render_mode skip_vertex_transform;
 uniform vec2 offset;
@@ -71,15 +72,15 @@ void fragment() {
 //    }
 }"
 
-[sub_resource type="ShaderMaterial" id=8]
-shader = SubResource( 7 )
-shader_param/offset = null
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+shader_param/offset = Vector2( 100, 100 )
 shader_param/center = Vector2( 0, 0 )
 shader_param/resolution = Vector2( 771, 528 )
 shader_param/width = 2.0
 shader_param/modNum = 1.0
 
-[sub_resource type="Shader" id=9]
+[sub_resource type="Shader" id=5]
 code = "shader_type canvas_item;
 uniform vec2 offset;
 uniform vec2 center;
@@ -89,28 +90,34 @@ uniform float width;
 void vertex() {
     vec2 xxx =  resolution / 2f;
     float aspect = resolution.x / resolution.y;
-    vec2 z = vec2(width / resolution.x, (width / aspect) / resolution.y);
-    mat2 scale =mat2(vec2(z.x, 0), vec2(0, z.y));
-//    VERTEX = center + ((xxx - vec2(-offset.x, offset.y) - VERTEX.xy) * mat2(vec2(z.x, 0), vec2(0, z.y)) );
-    VERTEX += (xxx + vec2(offset.x, offset.y) * scale;
-//    POINT_SIZE = 10f;
+    vec2 z = vec2(-resolution.x / width, resolution.y / (width / aspect));
+    mat2 scale = mat2(vec2(z.x, 0), vec2(0, z.y));
+//    VERTEX = center + ((xxx - vec2(-offset.x, offset.y) - VERTEX.xy) * mat2(vec2(z.x, 0), vec2(0, z.y)) );   
+    VERTEX += vec2(center.x, center.y);
+    VERTEX *= scale;
+    VERTEX = vec2(xxx.x, xxx.y + offset.y) - VERTEX;
+    POINT_SIZE = 1f;
 }"
 
-[sub_resource type="ShaderMaterial" id=10]
-shader = SubResource( 9 )
+[sub_resource type="ShaderMaterial" id=6]
+shader = SubResource( 5 )
+shader_param/offset = Vector2( 100, 100 )
+shader_param/center = null
+shader_param/resolution = Vector2( 771, 528 )
+shader_param/width = 2.0
 
-[sub_resource type="SpatialMaterial" id=3]
+[sub_resource type="SpatialMaterial" id=7]
 next_pass = ExtResource( 3 )
 albedo_color = Color( 0.87451, 0.988235, 0.0901961, 1 )
 
-[sub_resource type="SphereMesh" id=4]
-material = SubResource( 3 )
+[sub_resource type="SphereMesh" id=8]
+material = SubResource( 7 )
 
-[sub_resource type="MultiMesh" id=5]
+[sub_resource type="MultiMesh" id=9]
 transform_format = 1
-mesh = SubResource( 4 )
+mesh = SubResource( 8 )
 
-[sub_resource type="MultiMesh" id=6]
+[sub_resource type="MultiMesh" id=10]
 transform_format = 1
 mesh = ExtResource( 4 )
 
@@ -156,6 +163,7 @@ spot_angle = 79.2
 spot_angle_attenuation = 0.554785
 
 [node name="Panel" type="Panel" parent="."]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = 2.0
@@ -164,21 +172,59 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ItemList" type="ItemList" parent="Panel"]
-anchor_right = 0.241
-anchor_bottom = 0.998
-margin_left = 4.0
-margin_top = 4.0
-margin_right = -0.266006
-margin_bottom = 0.201965
+[node name="PlanetsContainer" type="VBoxContainer" parent="Panel"]
+anchor_right = 0.239
+anchor_bottom = 0.293
+margin_top = 2.0
+margin_right = -0.214005
+margin_bottom = -0.0930023
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlanetsList" type="ItemList" parent="Panel/PlanetsContainer"]
+margin_right = 245.0
+margin_bottom = 174.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+script = ExtResource( 16 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FunctionsContainer" type="VBoxContainer" parent="Panel"]
+anchor_top = 0.323
+anchor_right = 0.239
+anchor_bottom = 0.739
+margin_top = -0.123001
+margin_right = -0.214005
+margin_bottom = -0.139008
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FunctionsList" type="ItemList" parent="Panel/FunctionsContainer"]
+margin_right = 245.0
+margin_bottom = 250.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+allow_reselect = true
+script = ExtResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ControllButtons" type="Panel" parent="Panel"]
 anchor_left = 0.24
 anchor_right = 0.24
-margin_left = -0.240005
-margin_top = 3.0
+margin_left = -0.23999
+margin_top = 2.12096
 margin_right = 775.76
-margin_bottom = 43.0
+margin_bottom = 32.121
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Restart" type="Button" parent="Panel/ControllButtons"]
 anchor_top = 0.2
@@ -211,12 +257,14 @@ __meta__ = {
 }
 
 [node name="Step" type="Button" parent="Panel/ControllButtons"]
-anchor_top = 0.2
-anchor_bottom = 0.2
-margin_left = 377.757
-margin_top = -1.18221
-margin_right = 427.757
-margin_bottom = 18.8178
+anchor_left = 0.487
+anchor_top = 0.161
+anchor_right = 0.487
+anchor_bottom = 0.161
+margin_left = -0.155029
+margin_top = -0.0122104
+margin_right = 49.845
+margin_bottom = 19.9878
 focus_neighbour_top = NodePath("../GridContainer")
 group = SubResource( 2 )
 text = "Step"
@@ -226,12 +274,14 @@ __meta__ = {
 }
 
 [node name="NSteps" type="Button" parent="Panel/ControllButtons"]
-anchor_top = 0.2
-anchor_bottom = 0.2
-margin_left = 432.757
-margin_top = -1.18221
-margin_right = 489.757
-margin_bottom = 18.8178
+anchor_left = 0.489
+anchor_top = 0.161
+anchor_right = 0.489
+anchor_bottom = 0.161
+margin_left = 53.293
+margin_top = -0.0122104
+margin_right = 110.293
+margin_bottom = 19.9878
 focus_neighbour_top = NodePath("../GridContainer")
 group = SubResource( 2 )
 text = "NSteps"
@@ -271,32 +321,25 @@ __meta__ = {
 }
 
 [node name="GraphContainer" type="PanelContainer" parent="Panel"]
-material = SubResource( 8 )
+material = SubResource( 4 )
 anchor_left = 0.247
 anchor_top = 0.113
 anchor_right = 0.998
 anchor_bottom = 0.992
-margin_left = -0.422012
-margin_top = 0.086998
-margin_right = 0.052002
-margin_bottom = -0.192017
+margin_left = -7.10274
+margin_top = -5.75864
+margin_right = -6.62872
+margin_bottom = -6.03766
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Node2D" type="Node2D" parent="Panel/GraphContainer"]
-position = Vector2( 385.129, 274.53 )
-scale = Vector2( 30, -30 )
-
-[node name="Lines" type="Line2D" parent="Panel/GraphContainer"]
-material = SubResource( 10 )
-points = PoolVector2Array( 0, 0, 1, 1 )
-default_color = Color( 0, 0, 0, 1 )
+[node name="Lines" type="Node2D" parent="Panel/GraphContainer"]
+material = SubResource( 6 )
 script = ExtResource( 15 )
 
 [node name="DebugPanel" type="Panel" parent="."]
-visible = false
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -511.0
@@ -309,12 +352,22 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GridContainer" type="GridContainer" parent="DebugPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="DebugPanel"]
 anchor_right = 1.0
-margin_right = -18.0
-margin_bottom = 120.0
+anchor_bottom = 0.205
+margin_bottom = -7.62939e-06
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="DebugPanel/VBoxContainer"]
+margin_right = 511.0
+margin_bottom = 123.0
 rect_clip_content = true
 focus_neighbour_bottom = NodePath("../Button")
+size_flags_horizontal = 3
+size_flags_vertical = 3
 custom_constants/vseparation = 3
 columns = 5
 script = ExtResource( 6 )
@@ -324,36 +377,36 @@ __meta__ = {
 "
 }
 
-[node name="Planet" type="Label" parent="DebugPanel/GridContainer"]
-margin_right = 95.0
+[node name="Planet" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
+margin_right = 99.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "Planet"
 
-[node name="Label2" type="Label" parent="DebugPanel/GridContainer"]
-margin_left = 99.0
-margin_right = 194.0
+[node name="Label2" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
+margin_left = 103.0
+margin_right = 202.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "Pozicija"
 
-[node name="Label3" type="Label" parent="DebugPanel/GridContainer"]
-margin_left = 198.0
-margin_right = 293.0
+[node name="Label3" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
+margin_left = 206.0
+margin_right = 305.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "Brzina"
 
-[node name="Label4" type="Label" parent="DebugPanel/GridContainer"]
-margin_left = 297.0
-margin_right = 392.0
+[node name="Label4" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
+margin_left = 309.0
+margin_right = 408.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "KE"
 
-[node name="Label5" type="Label" parent="DebugPanel/GridContainer"]
-margin_left = 396.0
-margin_right = 491.0
+[node name="Label5" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
+margin_left = 412.0
+margin_right = 511.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "KG"
@@ -368,15 +421,9 @@ margin_top = 0.199982
 margin_right = 2.0
 margin_bottom = -1.0
 script = ExtResource( 10 )
-
-[node name="VScrollBar" type="VScrollBar" parent="DebugPanel"]
-anchor_right = 1.0
-margin_left = 497.0
-margin_top = 10.0
-margin_right = -2.0
-margin_bottom = 113.0
-step = 1.0
-script = ExtResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Panel" type="Panel" parent="DebugPanel"]
 anchor_left = 0.004
@@ -489,9 +536,9 @@ current_path = "C:/Users/Branimir/source/repos/nbody/Nbody.Gui/"
 script = ExtResource( 8 )
 
 [node name="PlanetSystem" type="MultiMeshInstance" parent="."]
-multimesh = SubResource( 5 )
+multimesh = SubResource( 9 )
 script = ExtResource( 13 )
 
 [node name="PlanetSystemArrows" type="MultiMeshInstance" parent="."]
-multimesh = SubResource( 6 )
+multimesh = SubResource( 10 )
 script = ExtResource( 14 )
