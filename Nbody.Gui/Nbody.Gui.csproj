@@ -40,14 +40,19 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_Double|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug_Double\</OutputPath>
+    <DefineConstants>DEBUG;REAL_T_IS_DOUBLE;</DefineConstants>
+    <DebugType>portable</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GodotSharp">
-      <Private>False</Private>
-      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GodotSharpEditor" Condition=" '$(Configuration)' == 'Tools' ">
-      <Private>False</Private>
-      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharpEditor.dll</HintPath>
+      <HintPath>..\..\NotMyLibs\godot\modules\mono\glue\GodotSharp\GodotSharp\bin\Release\GodotSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
@@ -59,8 +64,12 @@
     <Compile Include="src\Controllers\DebugController.cs" />
     <Compile Include="src\Controllers\PlanetFabController.cs" />
     <Compile Include="src\Controllers\PlotFunctionsController.cs" />
+    <Compile Include="src\Core\CircularArray.cs" />
     <Compile Include="src\Core\Core.cs" />
+    <Compile Include="src\Core\MathReal.cs" />
     <Compile Include="src\Core\Planet.cs" />
+    <Compile Include="src\Core\Point3.cs" />
+    <Compile Include="src\Core\SymetricalMatrix.cs" />
     <Compile Include="src\Extensions\EnumerableExtensions.cs" />
     <Compile Include="src\Extensions\FunctionExtensions.cs" />
     <Compile Include="src\Extensions\VectorExtensions.cs" />

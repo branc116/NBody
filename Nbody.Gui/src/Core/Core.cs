@@ -1,10 +1,16 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using Godot;
+using MathNet.Numerics.LinearAlgebra;
 using NBody.Gui;
 using NBody.Gui.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+#if REAL_T_IS_DOUBLE
+using real_t = System.Double;
+#else
+using real_t = System.Single;
+#endif
 
 namespace NBody.Core
 {
@@ -12,19 +18,19 @@ namespace NBody.Core
     {
         public List<Planet> Planets { get; set; }
         private int _lastStep = -1;
-        private List<Vector<double>> _oldPositions;
-        public List<Vector<double>> Positions
+        private List<Vector<real_t>> _oldPositions;
+        public List<Vector<real_t>> Positions
         {
             get
             {
                 if (_lastStep == NStep)
                     return _oldPositions;
                 _lastStep = NStep;
-                return _oldPositions = Planets.Select(i => i.Position.Multiply(1)).ToList();
+                return _oldPositions = Planets.Select(i => i.Position.Clone()).ToList();
             }
         }
         [PropEdit]
-        public double GravitationalConstant;
+        public real_t GravitationalConstant;
         public int NStep { get; private set; } = 0;
 
         public void Step(int numberOfSteps)
@@ -35,16 +41,16 @@ namespace NBody.Core
             }
         }
 
-        public double CurTime { get; private set; } = 0.0;
+        public real_t CurTime { get; private set; } = (real_t)0;
         [PropEdit]
-        public double DeltaTimePerStep = 0.001;
+        public real_t DeltaTimePerStep = (real_t)0.001;
         [PropEdit]
         public bool SimulateColitions = true;
         public PlanetSystem Step()
         {
             var mergeNeedeed = false;
-            Vector<double> normal = CreateVector.Dense(new[] { 0.0, 0.0, 0.0 });
-            Vector<double> directedAcceleration = CreateVector.Dense(new[] { 0.0, 0.0, 0.0 });
+            var normal = CreateVector.Dense(new[] { (real_t)0, (real_t)0, (real_t)0 });
+            var directedAcceleration = CreateVector.Dense(new[] { (real_t)0, (real_t)0, (real_t)0 });
             var positions = Positions;
             for (var i1 = 0; i1 < Planets.Count; i1++)
             {
@@ -60,8 +66,8 @@ namespace NBody.Core
                     var position = positions[j];
 
                     planet.Position.Subtract(position, normal);
-                    var norm = normal.L2Norm();
-                    var absoluteAcceleration = this.GravitationalConstant * interacts.Mass / Math.Pow(norm, 2.0);
+                    var norm = (real_t)normal.L2Norm();
+                    var absoluteAcceleration = this.GravitationalConstant * interacts.Mass / (norm*norm);
                     normal.Normalize(2).Multiply(-absoluteAcceleration, directedAcceleration);
                     newVelocity.Add(directedAcceleration.Multiply(DeltaTimePerStep), newVelocity);
                     if (norm < (interacts.Radius + planet.Radius))
@@ -77,10 +83,11 @@ namespace NBody.Core
             CurTime += DeltaTimePerStep;
             return this;
         }
+        
         public void MergePlanets()
         {
             var orderedPlanets = Planets.OrderByDescending(i => i.Mass).ToList();
-            Vector<double> normal = CreateVector.Dense(new[] { 0.0, 0.0, 0.0 });
+            var normal = CreateVector.Dense(new[] { (real_t)0, (real_t)0, (real_t)0 });
             for (var i = 0; i < orderedPlanets.Count; i++)
             {
                 var mergeTo = orderedPlanets[i];
@@ -97,22 +104,22 @@ namespace NBody.Core
                 }
             }
         }
-        public double TotalMass()
+        public real_t TotalMass()
             => Planets.Sum(i => i.Mass);
 
-        public Vector<double> MassCenter()
+        public Vector<real_t> MassCenter()
         {
             var totalMass = TotalMass();
-            var a = CreateVector.Dense<double>(new[] { 0.0, 0.0, 0.0 });
+            var a = CreateVector.Dense<real_t>(new[] { (real_t)0, (real_t)0, (real_t)0 });
             foreach (var planet in Planets)
             {
                 a.Add(planet.Position.Multiply(planet.Mass / totalMass), a);
             }
             return a;
         }
-        public Vector<double> TotalMomentum()
+        public Vector<real_t> TotalMomentum()
         {
-            var a = CreateVector.Dense<double>(new[] { 0.0, 0.0, 0.0 });
+            var a = CreateVector.Dense<real_t>(new[] { (real_t)0, (real_t)0, (real_t)0 });
             foreach (var planet in Planets)
             {
                 a.Add(planet.Momentum, a);

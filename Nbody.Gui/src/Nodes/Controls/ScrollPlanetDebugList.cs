@@ -1,7 +1,7 @@
 using Godot;
 namespace NBody.Gui
 {
-    public class ScrollPlanetDebugList : VScrollBar
+    public class ScrollPlanetebugList : VScrollBar
     {
         // Declare member variables here. Examples:
         // private int a = 2;

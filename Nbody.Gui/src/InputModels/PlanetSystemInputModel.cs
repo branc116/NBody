@@ -2,14 +2,18 @@
 using NBody.Core;
 using System;
 using System.Linq;
-
+#if REAL_T_IS_DOUBLE
+using real_t = System.Double;
+#else
+using real_t = System.Single;
+#endif
 namespace NBody.Gui.InputModels
 {
     public class PlanetSystemInputModel
     {
         public PlanetsInputModel[] Planets { get; set; }
-        public double GravitationalConstant { get; set; }
-        public double Dt { get; set; }
+        public real_t GravitationalConstant { get; set; }
+        public real_t Dt { get; set; }
         public int StepsPerFrame { get; set; }
         public static PlanetSystemInputModel LoadFromFile(string fileName)
         {
@@ -35,10 +39,10 @@ namespace NBody.Gui.InputModels
     }
     public class PlanetsInputModel
     {
-        public double[] Position { get; set; }
-        public double[] Velocity { get; set; }
-        public double Mass { get; set; }
-        public double Radius { get; set; }
+        public real_t[] Position { get; set; }
+        public real_t[] Velocity { get; set; }
+        public real_t Mass { get; set; }
+        public real_t Radius { get; set; }
         public string Name { get; set; }
 
         internal Planet ToPlanet()
@@ -47,8 +51,8 @@ namespace NBody.Gui.InputModels
             {
                 Mass = Mass,
                 Name = Name,
-                Position = CreateVector.Dense<double>(Position),
-                Velocity = CreateVector.Dense<double>(Velocity),
+                Position = CreateVector.Dense(Position),
+                Velocity = CreateVector.Dense(Velocity),
                 Radius = Radius
             };
         }
