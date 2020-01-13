@@ -4,8 +4,6 @@ using NBody.Gui.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nbody.Gui.src.Controllers
 {
@@ -21,7 +19,8 @@ namespace Nbody.Gui.src.Controllers
                     var controllerName = (i.GetCustomAttributes(true).FirstOrDefault(j => j is ButtonCommandAttribute) as ButtonCommandAttribute).Name;
                     var instance = i.GetConstructor(new Type[] { }).Invoke(new object[] { });
                     return i.GetMethods()
-                        .Where(j => {
+                        .Where(j =>
+                        {
                             var param = j.GetParameters();
                             return param.Length == 1 && (param[0].ParameterType == typeof(Node) || param[0].ParameterType.IsSubclassOf(typeof(Node)));
                         })

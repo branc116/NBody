@@ -1,22 +1,16 @@
-using Godot;
-namespace NBody.Gui
-{
-    public class ScrollPlanetebugList : VScrollBar
-    {
-        // Declare member variables here. Examples:
-        // private int a = 2;
-        // private string b = "text";
+//using Godot;
+//namespace NBody.Gui
+//{
+//    public class ScrollPlanetebugList : VScrollBar
+//    {
+//        public override void _Ready()
+//        {
 
-        // Called when the node enters the scene tree for the first time.
-        public override void _Ready()
-        {
+//        }
 
-        }
-
-        //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-        public override void _Process(float delta)
-        {
-            SourceOfTruth.DebugPlanetListScrollValue = (int)Value;
-        }
-    }
-}
+//        public override void _Process(float delta)
+//        {
+//            SourceOfTruth.DebugPlanetListScrollValue = (int)Value;
+//        }
+//    }
+//}

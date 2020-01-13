@@ -1,10 +1,7 @@
 ﻿using Godot;
 using Nbody.Gui.InputModels;
 using NBody.Gui;
-using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nbody.Gui.src.Nodes.Controls
 {
@@ -28,7 +25,8 @@ namespace Nbody.Gui.src.Nodes.Controls
                 return;
             this.Clear();
             var funcs = _functionsManager.GetFunctions();
-            foreach (var func in funcs) {
+            foreach (var func in funcs)
+            {
                 this.AddItem(func);
             }
             _lastSelectedNumerOfPlanets = selectedPlanetsCount;

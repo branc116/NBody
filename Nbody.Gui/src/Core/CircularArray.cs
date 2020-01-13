@@ -8,27 +8,41 @@ namespace NBody.Core
     {
         private readonly T[] _coll;
         private int _position;
+        private int _positionRead;
         private readonly int _max;
+        private readonly int _rememberEvery;
         private int _lenght;
+        private int _mod;
         public int Position => _position;
         public int Length => _lenght;
-        public CircularArray(int N)
+        public CircularArray(int N, int rememberEvery = 1)
         {
             _coll = new T[N];
-            _position = 0;
-            _lenght = 0;
+            _position = _positionRead = _lenght = 0;
             _max = N;
+            _rememberEvery = rememberEvery;
         }
         public void Add(T item)
         {
             _coll[_position] = item;
-            _lenght++;
-            _position++;
-            _position %= _max;
+
+            if (_mod % _rememberEvery == 0)
+            {
+                _position++;
+                _position %= _max;
+                _lenght++;
+                _mod = 0;
+                _positionRead = _position == 0 ? _max - 1 : _position - 1;
+            }
+            else
+            {
+                _positionRead = _position;
+            }
+            _mod++;
         }
         public T Last()
         {
-            return _position == 0 ? _coll[_max - 1] : _coll[_position - 1];
+            return _coll[_positionRead];
         }
         public void Clear()
         {
@@ -38,8 +52,8 @@ namespace NBody.Core
         public IEnumerator<T> GetEnumerator()
         {
             var len = Math.Min(_lenght, _max);
-            var cur = _position - len;
-            while (len-- > 0)
+            var cur = _positionRead - len + 2;
+            while (len-- > _rememberEvery)
             {
                 if (cur < 0) cur += _max;
                 yield return _coll[cur];

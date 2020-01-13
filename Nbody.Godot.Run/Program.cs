@@ -6,18 +6,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using Nbody.Gui.Core;
+using System.Collections.Generic;
+
+
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
 using real_t = System.Single;
-using Nbody.Gui.Core;
-using System.Collections.Generic;
 #endif
+
 #if GODOT_REAL_T_IS_DOUBLE
 using godot_real_t = System.Double;
 #else
 using godot_real_t = System.Single;
 #endif
+
 namespace NBody.Gui.Run
 {
     class Program
@@ -29,21 +33,34 @@ namespace NBody.Gui.Run
         {
             //var proc = System.Diagnostics.Process.Start(GodotExePath, $"--path {ProjectFile}");
             //proc.WaitForExit();
-            var a = System.Text.Json.JsonSerializer.Deserialize<Point3>("[0, 0, 1]");
-            var outStr = "# of planets, with Collision, without collision\n";
-            for (var i = 2; i < 1000; i *= 2)
+            using var kernel = new Kernels.NbodyClKernel();
+            var outStr = "# of planets, with Collision, without collision, openCl\n";
+            for (var i = 2; i < 5000; i *= 2)
             {
                 var system1 = GenerateRandomSytem(i);
                 var system2 = GenerateRandomSytem(i);
+                var system3 = GenerateRandomSytem(i);
                 var time1 = TimeSpan.FromTicks(BenchStep_WithColistions(system1)).ToString();
                 var time2 = TimeSpan.FromTicks(BenchStep_WithoutCollisions(system2)).ToString();
-                outStr += $"{i}, {time1}, {time2}\n";
+                var time3 = TimeSpan.FromTicks(BenchStep_OpenCl(system3)).ToString();
+                outStr += $"{i}, {time1}, {time2}, {time3}\n";
             }
             if (!Directory.Exists(BenchamarkFolder))
                 Directory.CreateDirectory(BenchamarkFolder);
             var outPath = Path.Combine(BenchamarkFolder, $"benchmark.{DateTime.Now.Ticks}.csv");
             File.WriteAllText(outPath, outStr);
         }
+
+        private static long BenchStep_OpenCl(PlanetSystem system3)
+        {
+            var sw = new Stopwatch();
+            var s = 100;
+            sw.Start();
+            system3.StepCL(s);
+            sw.Stop();
+            return sw.ElapsedTicks / s;
+        }
+
         static PlanetSystem GenerateRandomSytem(int numberOfPlanets)
         {
             var random = new Random(numberOfPlanets);
@@ -54,8 +71,8 @@ namespace NBody.Gui.Run
                 Planets = Enumerable.Range(0, numberOfPlanets).Select(i => new Planet
                 {
                     Mass = (real_t)random.NextDouble() * 100,
-                    Velocity = CreateVector.DenseOfArray(new real_t[] { rP(), rP(), rP() }),
-                    Position = CreateVector.DenseOfArray(new real_t[] { rP(), rP(), rP() }),
+                    Velocity = new Point3(rP(), rP(), rP()),
+                    Position = new Point3(rP(), rP(), rP()),
                     Name = $"Planet #{i}",
                     Radius = ((real_t)random.NextDouble() + (real_t)0.1) * 10
                 }).ToList(),
@@ -68,25 +85,21 @@ namespace NBody.Gui.Run
         {
             system.SimulateColitions = true;
             var sw = new Stopwatch();
-            var steps = 100;
+            var s = 100;
             sw.Start();
-            while (steps-- > 0)
-            {
-                system.Step();
-            }
-            return sw.ElapsedTicks / 100;
+            system.Step(s);
+            sw.Stop();
+            return sw.ElapsedTicks / s;
         }
         static long BenchStep_WithoutCollisions(PlanetSystem system)
         {
             system.SimulateColitions = false;
             var sw = new Stopwatch();
-            var steps = 100;
+            var s = 100;
             sw.Start();
-            while (steps-- > 0)
-            {
-                system.Step();
-            }
-            return sw.ElapsedTicks / 100;
+            system.Step(s);
+            sw.Stop();
+            return sw.ElapsedTicks / s;
         }
     }
 }

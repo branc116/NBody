@@ -9,10 +9,12 @@ namespace NBody.Gui
         private readonly FieldInfo _fieldInfo;
         private readonly Func<object> _obj;
         private string _oldText;
-        public DynamicLineEdit(FieldInfo fieldInfo, Func<object> obj)
+        public DynamicLineEdit(FieldInfo fieldInfo, Func<object> obj, bool isEditable = true)
         {
             _fieldInfo = fieldInfo;
             _obj = obj;
+            Editable = isEditable;
+            SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
         }
         public override void _Ready()
         {
@@ -56,9 +58,9 @@ namespace NBody.Gui
         }
         public override void _Process(float delta)
         {
-            if (IsVisibleInTree())
+            if (base.HasFocus())
                 return;
-            if (_oldText != Text)
+            if (Editable && _oldText != Text)
             {
                 TextToProp();
                 _oldText = Text;

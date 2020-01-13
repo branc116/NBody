@@ -1,7 +1,5 @@
 using Godot;
 using NBody.Core;
-using NBody.Gui;
-using NBody.Gui.Controllers;
 using NBody.Gui.Extensions;
 using NBody.Gui.InputModels;
 
@@ -9,23 +7,16 @@ namespace NBody.Gui.Nodes.Spatials
 {
     public class Nbody : Spatial
     {
-        private readonly PlanetFabController _fabController = new PlanetFabController();
-        private Spatial _planetMesh;
+        private readonly SimulationModel _simulationModel = SourceOfTruth.SimulationModel;
         private Spatial _arrowSpatial;
-        private Spatial _lightSpatial;
         private Spatial _globalArrow;
-        private int _stepsPerFrame;
         public override void _Ready()
         {
-            _planetMesh = _planetMesh is null ? this.GetNode<Spatial>(new NodePath("Spatial")) : _planetMesh;
             _arrowSpatial = _arrowSpatial is null ? this.GetNode<Spatial>(new NodePath("ArrowSpatial")) : _arrowSpatial;
-            _lightSpatial = _lightSpatial is null ? this.GetNode<Spatial>(new NodePath("PlanetLightSpatial")) : _lightSpatial;
             _globalArrow = _globalArrow is null ? _arrowSpatial.Duplicate() as Spatial : _globalArrow;
             AddChild(_globalArrow);
             var inputModel = PlanetSystemInputModel
-                .LoadFromFile(SourceOfTruth.InputFile);
-            if (SourceOfTruth.RestartStepPerFrame)
-                SourceOfTruth.StepsPerFrame = inputModel.StepsPerFrame;
+                .LoadFromFile(_simulationModel.InputFile);
             Gui.SourceOfTruth.System = inputModel
                 .ToPlanetSystem();
         }
@@ -38,42 +29,24 @@ namespace NBody.Gui.Nodes.Spatials
             {
                 _Ready();
             }
-            else if (str == "L")
-            {
-                SourceOfTruth.ShowLights = !SourceOfTruth.ShowLights;
-            }
         }
         public override void _Process(float delta)
         {
-            int times = SourceOfTruth.StepsPerFrame;
+            int times = _simulationModel.StepsPerFrame;
             var system = SourceOfTruth.System;
-            if (SourceOfTruth.RestartRequested)
+            if (_simulationModel.RestartRequested)
             {
                 _Ready();
-                SourceOfTruth.RestartRequested = false;
+                _simulationModel.RestartRequested = false;
             }
-            if (!SourceOfTruth.Paused)
+            if (!_simulationModel.Paused)
             {
-                do
-                {
-                    system.Step();
-                } while (times-- > 0);
+                if (_simulationModel.UseOpenCl)
+                    system.StepCL(times);
+                else
+                    system.Step(times);
+                UpdateArrow(system);
             }
-            //_fabController.DeleteOld(system, this);
-            //_fabController.UpdateExisiting(system, this);
-            //_fabController.AddNew(system, this, (planet) =>
-            //{
-            //	return new List<IPlanetFab>()
-            //	{
-            //		//new PlanetModel(planet, _planetMesh),
-            //		new PlanetLight(_lightSpatial)
-            //		{
-            //			Planet = planet
-            //		},
-            //		new PlanetArrow(planet, _arrowSpatial)
-            //	};
-            //});
-            UpdateArrow(system);
         }
         private void UpdateArrow(PlanetSystem system)
         {

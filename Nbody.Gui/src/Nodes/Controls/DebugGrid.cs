@@ -1,5 +1,6 @@
 using Godot;
 using NBody.Gui.Controllers;
+using NBody.Gui.InputModels;
 using System.Linq;
 
 namespace NBody.Gui
@@ -15,22 +16,21 @@ namespace NBody.Gui
     public class DebugGrid : GridContainer
     {
         private readonly PlanetFabController _fabController = new PlanetFabController();
+        private readonly VisualizationModel _visualizationModel = SourceOfTruth.VisualizationModel;
         public override void _Ready()
         {
-            _fabController.ShowSubset = true;
         }
         public override void _Draw()
         {
             base._Draw();
-            VisualServer.CanvasItemSetClip(this.GetCanvas(), true);
+            //VisualServer.CanvasItemSetClip(this.GetCanvas(), true);
         }
         public override void _Process(float delta)
         {
-            if (!SourceOfTruth.IsDebugShown)
+            if (!_visualizationModel.IsDebugShown)
                 return;
             var children = this.GetChildren();
             var system = SourceOfTruth.System;
-            _fabController.progress = SourceOfTruth.DebugPlanetListScrollValue;
             _fabController.DeleteOld(system, this);
             _fabController.UpdateExisiting(system, this);
             _fabController.AddNew(system, this, (planet) =>

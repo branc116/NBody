@@ -18,12 +18,15 @@ public class GraphContainer : PanelContainer
         base._GuiInput(@event);
         if (@event is InputEventMouseMotion iem && iem.ButtonMask == 1)
         {
-            var width = SourceOfTruth.PlotWidth;
-            SourceOfTruth.PlotCenter -= iem.Relative / (new Vector2(-RectSize.x / width, RectSize.y / (width / (RectSize.x / RectSize.y))));
+            var width = _plotsModel.PlotWidth;
+            var move = iem.Relative / (new Vector2(-RectSize.x / width, RectSize.y / (width / (RectSize.x / RectSize.y))));
+            _plotsModel.PlotCenterX += move.x;
+            _plotsModel.PlotCenterY += move.y;
         }
         if (@event is InputEventMouseButton iemb && (iemb.ButtonMask == 8 || iemb.ButtonMask == 16))
         {
-            SourceOfTruth.PlotWidth *= iemb.ButtonMask == 16 ? 1.1f : 0.90f;
+            _plotsModel.PlotWidth *= iemb.ButtonMask == 16 ? 1.1f : 0.90f;
+            _plotsModel.DivSize = (float)Math.Pow(10, Math.Floor(Math.Log10(_plotsModel.PlotWidth) - 0.3));
         }
     }
     public override void _UnhandledKeyInput(InputEventKey @event)
@@ -38,13 +41,14 @@ public class GraphContainer : PanelContainer
     {
         if (!_plotsModel.PlotVisible)
             return;
-        SourceOfTruth.PlotOffset = RectPosition;
-        SourceOfTruth.PlotResoultion = base.RectSize;
-        (base.Material as ShaderMaterial).SetShaderParam("center", SourceOfTruth.PlotCenter);
-        (base.Material as ShaderMaterial).SetShaderParam("offset", SourceOfTruth.PlotOffset);
-        (base.Material as ShaderMaterial).SetShaderParam("width", SourceOfTruth.PlotWidth);
-        (base.Material as ShaderMaterial).SetShaderParam("resolution", SourceOfTruth.PlotResoultion);
-        (base.Material as ShaderMaterial).SetShaderParam("modNum", Math.Pow(10, Math.Floor(Math.Log10(SourceOfTruth.PlotWidth) - 0.3)));
+        _plotsModel.PlotOffset = RectPosition;
+        _plotsModel.PlotResoultion = base.RectSize;
+
+        (base.Material as ShaderMaterial).SetShaderParam("center", _plotsModel.PlotCenter);
+        (base.Material as ShaderMaterial).SetShaderParam("offset", _plotsModel.PlotOffset);
+        (base.Material as ShaderMaterial).SetShaderParam("width", _plotsModel.PlotWidth);
+        (base.Material as ShaderMaterial).SetShaderParam("resolution", _plotsModel.PlotResoultion);
+        (base.Material as ShaderMaterial).SetShaderParam("modNum", _plotsModel.DivSize);
     }
     public override void _Draw()
     {

@@ -1,12 +1,11 @@
 ﻿using Godot;
 using Nbody.Gui.InputModels;
+using NBody.Core;
 using NBody.Gui;
 using NBody.Gui.Controllers;
-using System;
+using NBody.Gui.InputModels;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nbody.Gui.Nodes.Controls
 {
@@ -14,6 +13,7 @@ namespace Nbody.Gui.Nodes.Controls
     {
         private readonly PlanetFabController _planetFabController = new PlanetFabController();
         private readonly PlotsModel _plotModel = SourceOfTruth.PlotModel;
+        private readonly PlanetCreatorModel _planetCreatorModel = SourceOfTruth.PlanetCreatorModel;
         private int _lastSelected = -1;
         public override void _Ready()
         {
@@ -27,7 +27,7 @@ namespace Nbody.Gui.Nodes.Controls
         public override void _Process(float delta)
         {
             base._Process(delta);
-            if (!_plotModel.PlotVisible)
+            if (!IsVisibleInTree())
                 return;
             _planetFabController.DeleteOld(SourceOfTruth.System, this);
             _planetFabController.AddNew(SourceOfTruth.System, this, (planet) =>
@@ -41,10 +41,10 @@ namespace Nbody.Gui.Nodes.Controls
                 };
             });
             _planetFabController.UpdateExisiting(SourceOfTruth.System, this);
-            
+
             if (base.IsAnythingSelected())
             {
-                _plotModel.SelectedPlanets = base.GetSelectedItems()
+                _plotModel.SelectedPlanets = _planetCreatorModel.SelectedPlanets = base.GetSelectedItems()
                     .Select(i => _planetFabController[i])
                     .ToArray();
                 //var selected = base.GetSelectedItems().First();
@@ -53,6 +53,9 @@ namespace Nbody.Gui.Nodes.Controls
                 //    SourceOfTruth.SelectedPlanet = _planetFabController[selected];
                 //    _lastSelected = selected;
                 //}
+            }else
+            {
+                _planetCreatorModel.SelectedPlanets = Enumerable.Empty<Planet>().ToArray();
             }
         }
     }

@@ -10,7 +10,7 @@ using real_t = System.Single;
 
 namespace Nbody.Gui.Core
 {
-    public struct Point3 : IEquatable<Point3>, IEnumerable<real_t>
+    public readonly struct Point3 : IEquatable<Point3>, IEnumerable<real_t>
     {
         public enum Axis
         {
@@ -19,9 +19,9 @@ namespace Nbody.Gui.Core
             Z
         }
 
-        public real_t x;
-        public real_t y;
-        public real_t z;
+        public readonly real_t x;
+        public readonly real_t y;
+        public readonly real_t z;
 
         public real_t this[int index]
         {
@@ -39,41 +39,47 @@ namespace Nbody.Gui.Core
                         throw new IndexOutOfRangeException();
                 }
             }
-            set
-            {
-                switch (index)
-                {
-                    case 0:
-                        x = value;
-                        return;
-                    case 1:
-                        y = value;
-                        return;
-                    case 2:
-                        z = value;
-                        return;
-                    default:
-                        throw new IndexOutOfRangeException();
-                }
-            }
+            //set
+            //{
+            //    switch (index)
+            //    {
+            //        case 0:
+            //            x = value;
+            //            return;
+            //        case 1:
+            //            y = value;
+            //            return;
+            //        case 2:
+            //            z = value;
+            //            return;
+            //        default:
+            //            throw new IndexOutOfRangeException();
+            //    }
+            //}
         }
 
-        internal void Normalize()
+        internal Point3 Clone()
         {
-            real_t lengthsq = LengthSquared();
-
-            if (lengthsq == 0)
-            {
-                x = y = z = 0f;
-            }
-            else
-            {
-                real_t length = MathReal.Sqrt(lengthsq);
-                x /= length;
-                y /= length;
-                z /= length;
-            }
+            //return new Point3(this);
+            return this;
         }
+
+        //internal void Normalize()
+        //{
+        //    real_t lengthsq = LengthSquared();
+
+        //    if (lengthsq == 0)
+        //    {
+        //        x = y = z = 0f;
+        //    }
+        //    else
+        //    {
+        //        real_t length = MathReal.Sqrt(lengthsq);
+        //        x /= length;
+        //        y /= length;
+        //        z /= length;
+        //    }
+        //}
 
         public Point3 Abs()
         {
@@ -205,26 +211,57 @@ namespace Nbody.Gui.Core
 
         public Point3 Normalized()
         {
-            var v = this;
-            v.Normalize();
-            return v;
+            real_t lengthsq = LengthSquared();
+
+            if (lengthsq == 0)
+            {
+                return Point3.Zero;
+            }
+            else
+            {
+                real_t length = MathReal.Sqrt(lengthsq);
+                return new Point3(x / length,
+                y / length,
+                z / length);
+            }
+        }
+        public Point3 NormalizedGPU()
+        {
+            real_t lengthsq = LengthSquared();
+
+            if (lengthsq == 0)
+            {
+                return Point3.Zero;
+            }
+            else
+            {
+                float length = lengthsq/2f; 
+                int i = 0;
+                while(i++ < 10)
+                {
+                    length -= (length * length - lengthsq) / (2f * length); 
+                }
+                return new Point3(x / length,
+                y / length,
+                z / length);
+            }
         }
 
         public Point3 PosMod(real_t mod)
         {
-            Point3 v;
-            v.x = MathReal.PosMod(x, mod);
-            v.y = MathReal.PosMod(y, mod);
-            v.z = MathReal.PosMod(z, mod);
+            var v = new Point3(
+             MathReal.PosMod(x, mod)
+             , MathReal.PosMod(y, mod)
+             , MathReal.PosMod(z, mod));
             return v;
         }
 
         public Point3 PosMod(Point3 modv)
         {
-            Point3 v;
-            v.x = MathReal.PosMod(x, modv.x);
-            v.y = MathReal.PosMod(y, modv.y);
-            v.z = MathReal.PosMod(z, modv.z);
+            var v = new Point3(
+            MathReal.PosMod(x, modv.x)
+            , MathReal.PosMod(y, modv.y)
+            , MathReal.PosMod(z, modv.z));
             return v;
         }
 
@@ -249,10 +286,10 @@ namespace Nbody.Gui.Core
 
         public Point3 Sign()
         {
-            Point3 v;
-            v.x = MathReal.Sign(x);
-            v.y = MathReal.Sign(y);
-            v.z = MathReal.Sign(z);
+            Point3 v = new Point3(
+            MathReal.Sign(x)
+            , MathReal.Sign(y)
+            , MathReal.Sign(z));
             return v;
         }
 
@@ -297,84 +334,63 @@ namespace Nbody.Gui.Core
             z = v.z;
         }
 
-        public static Point3 operator +(Point3 left, Point3 right)
-        {
-            left.x += right.x;
-            left.y += right.y;
-            left.z += right.z;
-            return left;
-        }
+        public static Point3 operator +(Point3 left, Point3 right) => new Point3(
+            left.x + right.x,
+            left.y + right.y,
+            left.z + right.z);
 
-        public static Point3 operator -(Point3 left, Point3 right)
-        {
-            left.x -= right.x;
-            left.y -= right.y;
-            left.z -= right.z;
-            return left;
-        }
+        public static Point3 operator -(Point3 left, Point3 right) => new Point3(
+            left.x - right.x,
+            left.y - right.y,
+            left.z - right.z);
 
-        public static Point3 operator -(Point3 vec)
-        {
-            vec.x = -vec.x;
-            vec.y = -vec.y;
-            vec.z = -vec.z;
-            return vec;
-        }
+        public static Point3 operator -(Point3 vec) => new Point3(-vec.x,
+            -vec.y,
+            -vec.z);
 
-        public static Point3 operator *(Point3 vec, real_t scale)
-        {
-            vec.x *= scale;
-            vec.y *= scale;
-            vec.z *= scale;
-            return vec;
-        }
+        public static Point3 operator *(Point3 vec, real_t scale) => new Point3(vec.x * scale,
+                vec.y * scale,
+                vec.z * scale);
 
         public static Point3 operator *(real_t scale, Point3 vec)
         {
-            vec.x *= scale;
-            vec.y *= scale;
-            vec.z *= scale;
-            return vec;
+            return vec * scale;
         }
 
         public static Point3 operator *(Point3 left, Point3 right)
         {
-            left.x *= right.x;
-            left.y *= right.y;
-            left.z *= right.z;
-            return left;
+            return new Point3(left.x * right.x,
+                left.y * right.y,
+                left.z * right.z);
         }
 
         public static Point3 operator /(Point3 vec, real_t scale)
         {
-            vec.x /= scale;
-            vec.y /= scale;
-            vec.z /= scale;
-            return vec;
+            return new Point3(vec.x / scale,
+            vec.y / scale,
+            vec.z / scale);
         }
 
         public static Point3 operator /(Point3 left, Point3 right)
         {
-            left.x /= right.x;
-            left.y /= right.y;
-            left.z /= right.z;
-            return left;
+            return new Point3(left.x / right.x,
+            left.y / right.y,
+            left.z / right.z);
         }
 
         public static Point3 operator %(Point3 vec, real_t divisor)
         {
-            vec.x %= divisor;
-            vec.y %= divisor;
-            vec.z %= divisor;
-            return vec;
+            return new Point3(vec.x % divisor,
+                vec.y % divisor,
+                vec.z % divisor);
         }
 
         public static Point3 operator %(Point3 vec, Point3 divisorv)
         {
-            vec.x %= divisorv.x;
-            vec.y %= divisorv.y;
-            vec.z %= divisorv.z;
-            return vec;
+            return new Point3(
+            vec.x % divisorv.x,
+            vec.y % divisorv.y,
+            vec.z % divisorv.z);
         }
 
         public static bool operator ==(Point3 left, Point3 right)
@@ -462,7 +478,7 @@ namespace Nbody.Gui.Core
 
         public override string ToString()
         {
-            return $"({x}, {y}, {z})";
+            return $"({x:F3}, {y:F3}, {z:F3})";
         }
 
         public string ToString(string format)

@@ -1,29 +1,27 @@
 ﻿using Godot;
 using Nbody.Gui.src.Attributes;
 using NBody.Gui;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NBody.Gui.InputModels;
 
 namespace Nbody.Gui.src.Controllers
 {
-    [ButtonCommand(Name ="")]
+    [ButtonCommand(Name = "")]
     public class DebugController
     {
+        private readonly SimulationModel _simulationModel = SourceOfTruth.SimulationModel;
+        private readonly VisualizationModel _visualizationModel = SourceOfTruth.VisualizationModel;
         public void Restart(Node node)
         {
-            SourceOfTruth.RestartRequested = true;
+            _simulationModel.RestartRequested = true;
         }
         public void Pause(Node node)
         {
-            SourceOfTruth.Paused = true;
+            _simulationModel.Paused = true;
             (node as Button).Text = node.Name = "Resume";
         }
         public void Resume(Node node)
         {
-            SourceOfTruth.Paused = false;
+            _simulationModel.Paused = false;
             (node as Button).Text = node.Name = "Pause";
         }
         public void Step(Node node)
@@ -32,12 +30,17 @@ namespace Nbody.Gui.src.Controllers
         }
         public void NSteps(Node node)
         {
-            SourceOfTruth.System.Step(SourceOfTruth.StepsPerFrame);
+            SourceOfTruth.System.Step(_simulationModel.StepsPerFrame);
         }
-        [ButtonCommand(Name ="Open")]
+        [ButtonCommand(Name = "Open")]
+        
         public void OpenFileDialog(Node node)
         {
-            SourceOfTruth.ShowOpenPlanetSystemDialog = true;
+            _simulationModel.ShowOpenPlanetSystemDialog = true;
+        }
+        public void CloseDebug(Node node)
+        {
+            _visualizationModel.IsDebugShown = false;
         }
     }
 }

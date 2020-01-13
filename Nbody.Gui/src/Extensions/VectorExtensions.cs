@@ -17,6 +17,10 @@ namespace NBody.Gui.Extensions
 {
     public static class VectorExtensions
     {
+        public static Vector3 ToV3(this Nbody.Gui.Core.Point3 point)
+        {
+            return new Vector3((godot_real_t)point.x, (godot_real_t)point.y, (godot_real_t)point.z);
+        }
         public static Vector3 ToV3(this Vector<real_t> vs)
         {
             return new Vector3((godot_real_t)vs[0], (godot_real_t)vs[1], (godot_real_t)vs[2]);
@@ -122,6 +126,20 @@ namespace NBody.Gui.Extensions
                 new Vector3(0f, 0f, scale.z),
                 Vector3.Zero
                 );
+        }
+        public static (Vector2 min, Vector2 max) GetMinMax(this Vector2[] array)
+        {
+            var min = new Vector2(godot_real_t.MaxValue, godot_real_t.MaxValue);
+            var max = new Vector2(godot_real_t.MinValue, godot_real_t.MinValue);
+            for (int i = 0; i < array.Length; i++)
+            {
+                var el = array[i];
+                if (min.x > el.x) min.x = el.x;
+                if (min.y > el.y) min.y = el.y;
+                if (max.x < el.x) max.x = el.x;
+                if (max.y < el.y) max.y = el.y;
+            }
+            return (min, max);
         }
     }
 }

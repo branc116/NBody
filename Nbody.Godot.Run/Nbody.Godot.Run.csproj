@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ILGPU" Version="0.7.1" />
     <PackageReference Include="MathNet.Numerics" Version="4.9.0" />
   </ItemGroup>
 

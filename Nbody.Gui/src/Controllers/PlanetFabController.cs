@@ -13,7 +13,9 @@ namespace NBody.Gui.Controllers
         public int progress = 0;
         public Dictionary<string, List<IPlanetFab>> Planets { get; set; } = new Dictionary<string, List<IPlanetFab>>();
         List<string> _planetNames = new List<string>();
-        public Planet this[int i] { get
+        public Planet this[int i]
+        {
+            get
             {
                 if (_planetNames.Count <= i)
                     return null;
@@ -21,7 +23,8 @@ namespace NBody.Gui.Controllers
                 if (!Planets.ContainsKey(key))
                     return null;
                 return Planets[key].FirstOrDefault()?.Planet;
-            } }
+            }
+        }
         public void DeleteOld(PlanetSystem system, Node parent)
         {
             Planets.Where(i => !system.HasPlanet(i.Value.First().Planet))
@@ -36,7 +39,7 @@ namespace NBody.Gui.Controllers
                     if (parent is ItemList il)
                     {
                         il.RemoveItem(index);
-                    } 
+                    }
                 });
         }
         public void UpdateExisiting(PlanetSystem system, Node parent)

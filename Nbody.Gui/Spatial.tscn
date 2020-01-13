@@ -5,7 +5,7 @@
 [ext_resource path="res://planetShader.tres" type="Material" id=3]
 [ext_resource path="res://models/arrow.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://src/Nodes/Controls/ControlledButton.cs" type="Script" id=5]
-[ext_resource path="res://src/Nodes/Controls/DebugGrid.cs" type="Script" id=6]
+[ext_resource path="res://src/Nodes/Controls/PlanetCreatorFunctionList.cs" type="Script" id=6]
 [ext_resource path="res://src/Nodes/Spatials/Nbody.cs" type="Script" id=7]
 [ext_resource path="res://src/Nodes/Controls/PlanetSystemSelected.cs" type="Script" id=8]
 [ext_resource path="res://src/Nodes/Controls/GraphContainer.cs" type="Script" id=9]
@@ -16,6 +16,7 @@
 [ext_resource path="res://src/Nodes/Spatials/PlanetSystemArrowMultiMesh.cs" type="Script" id=14]
 [ext_resource path="res://src/Nodes/Controls/LinesDrawer.cs" type="Script" id=15]
 [ext_resource path="res://src/Nodes/Controls/PlanetSelectList.cs" type="Script" id=16]
+[ext_resource path="res://src/Nodes/Controls/PlanetCreatorParameters.cs" type="Script" id=17]
 
 [sub_resource type="ButtonGroup" id=1]
 
@@ -106,18 +107,13 @@ shader_param/center = null
 shader_param/resolution = Vector2( 771, 528 )
 shader_param/width = 2.0
 
-[sub_resource type="SpatialMaterial" id=7]
-next_pass = ExtResource( 3 )
-albedo_color = Color( 0.87451, 0.988235, 0.0901961, 1 )
+[sub_resource type="SphereMesh" id=7]
 
-[sub_resource type="SphereMesh" id=8]
-material = SubResource( 7 )
+[sub_resource type="MultiMesh" id=8]
+transform_format = 1
+mesh = SubResource( 7 )
 
 [sub_resource type="MultiMesh" id=9]
-transform_format = 1
-mesh = SubResource( 8 )
-
-[sub_resource type="MultiMesh" id=10]
 transform_format = 1
 mesh = ExtResource( 4 )
 
@@ -128,11 +124,18 @@ script = ExtResource( 7 )
 transform = Transform( 0.736745, -0.417058, 0.532231, 0, 0.787125, 0.616794, -0.676171, -0.45442, 0.57991, 10, 10, 20 )
 far = 200000.0
 script = ExtResource( 2 )
+mouse_mode = 0
 pitch_limit = 80
 max_speed = Vector3( 100, 100, 100 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( -0.637582, 0.0275111, 0.769892, -0.00167276, 0.99931, -0.0370944, -0.770381, -0.0249385, -0.637096, 3.17719, 4.29856, 0 )
+transform = Transform( -0.637582, 0.0275111, 0.769891, -0.00167276, 0.99931, -0.0370944, -0.770381, -0.0249385, -0.637096, 7.00537, 4.29856, -8.35883 )
+light_energy = 7.46
+light_indirect_energy = 5.69
+shadow_enabled = true
+
+[node name="DirectionalLight2" type="DirectionalLight" parent="."]
+transform = Transform( 0.624299, -0.027934, -0.780686, -0.00167276, 0.99931, -0.0370944, 0.781184, 0.0244639, 0.623822, -16.6384, 4.29856, 2.2119 )
 light_energy = 7.46
 light_indirect_energy = 5.69
 shadow_enabled = true
@@ -151,18 +154,7 @@ visible = false
 transform = Transform( 0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 2, 0 )
 mesh = ExtResource( 4 )
 
-[node name="PlanetLightSpatial" type="Spatial" parent="."]
-visible = false
-
-[node name="PlanetLight" type="SpotLight" parent="PlanetLightSpatial"]
-transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0 )
-light_energy = 12.46
-light_indirect_energy = 2.03
-spot_range = 17.8
-spot_angle = 79.2
-spot_angle_attenuation = 0.554785
-
-[node name="Panel" type="Panel" parent="."]
+[node name="PlotPanel" type="Panel" parent="."]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -172,7 +164,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PlanetsContainer" type="VBoxContainer" parent="Panel"]
+[node name="PlanetsContainer" type="VBoxContainer" parent="PlotPanel"]
 anchor_right = 0.239
 anchor_bottom = 0.293
 margin_top = 2.0
@@ -182,8 +174,8 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PlanetsList" type="ItemList" parent="Panel/PlanetsContainer"]
-margin_right = 245.0
+[node name="PlanetsList" type="ItemList" parent="PlotPanel/PlanetsContainer"]
+margin_right = 244.0
 margin_bottom = 174.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -193,20 +185,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="FunctionsContainer" type="VBoxContainer" parent="Panel"]
-anchor_top = 0.323
+[node name="FunctionsContainer" type="VBoxContainer" parent="PlotPanel"]
+anchor_top = 0.296
 anchor_right = 0.239
-anchor_bottom = 0.739
-margin_top = -0.123001
-margin_right = -0.214005
-margin_bottom = -0.139008
+anchor_bottom = 0.606
+margin_top = 0.104004
+margin_right = -0.213989
+margin_bottom = -0.205994
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="FunctionsList" type="ItemList" parent="Panel/FunctionsContainer"]
+[node name="FunctionsList" type="ItemList" parent="PlotPanel/FunctionsContainer"]
 margin_right = 245.0
-margin_bottom = 250.0
+margin_bottom = 186.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 allow_reselect = true
@@ -215,7 +207,26 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ControllButtons" type="Panel" parent="Panel"]
+[node name="PropsContainer" type="VBoxContainer" parent="PlotPanel"]
+anchor_top = 0.619
+anchor_right = 0.239
+anchor_bottom = 0.993
+margin_top = -3.01901
+margin_right = -0.213989
+margin_bottom = 0.20697
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlotProps" type="GridContainer" parent="PlotPanel/PropsContainer"]
+margin_right = 245.0
+margin_bottom = 227.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+script = ExtResource( 12 )
+
+[node name="ControllButtons" type="Panel" parent="PlotPanel"]
 anchor_left = 0.24
 anchor_right = 0.24
 margin_left = -0.23999
@@ -226,7 +237,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Restart" type="Button" parent="Panel/ControllButtons"]
+[node name="Restart" type="Button" parent="PlotPanel/ControllButtons"]
 anchor_top = 0.2
 anchor_bottom = 0.2
 margin_left = 22.4485
@@ -241,7 +252,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Pause" type="Button" parent="Panel/ControllButtons"]
+[node name="Pause" type="Button" parent="PlotPanel/ControllButtons"]
 anchor_top = 0.2
 anchor_bottom = 0.2
 margin_left = 93.7
@@ -256,7 +267,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Step" type="Button" parent="Panel/ControllButtons"]
+[node name="Step" type="Button" parent="PlotPanel/ControllButtons"]
 anchor_left = 0.487
 anchor_top = 0.161
 anchor_right = 0.487
@@ -273,7 +284,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="NSteps" type="Button" parent="Panel/ControllButtons"]
+[node name="NSteps" type="Button" parent="PlotPanel/ControllButtons"]
 anchor_left = 0.489
 anchor_top = 0.161
 anchor_right = 0.489
@@ -290,7 +301,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Open" type="Button" parent="Panel/ControllButtons"]
+[node name="Open" type="Button" parent="PlotPanel/ControllButtons"]
 anchor_left = 1.0
 anchor_top = 0.2
 anchor_right = 1.0
@@ -305,7 +316,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Close" type="Button" parent="Panel/ControllButtons"]
+[node name="Close" type="Button" parent="PlotPanel/ControllButtons"]
 anchor_left = 1.0
 anchor_top = 0.2
 anchor_right = 1.0
@@ -320,7 +331,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GraphContainer" type="PanelContainer" parent="Panel"]
+[node name="GraphContainer" type="PanelContainer" parent="PlotPanel"]
 material = SubResource( 4 )
 anchor_left = 0.247
 anchor_top = 0.113
@@ -335,15 +346,16 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Lines" type="Node2D" parent="Panel/GraphContainer"]
+[node name="Lines" type="Node2D" parent="PlotPanel/GraphContainer"]
 material = SubResource( 6 )
 script = ExtResource( 15 )
 
 [node name="DebugPanel" type="Panel" parent="."]
-anchor_left = 1.0
+visible = false
+anchor_left = 0.5
 anchor_right = 1.0
-margin_left = -511.0
-margin_bottom = 600.0
+anchor_bottom = 1.0
+margin_left = 1.0
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -351,65 +363,6 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="VBoxContainer" type="VBoxContainer" parent="DebugPanel"]
-anchor_right = 1.0
-anchor_bottom = 0.205
-margin_bottom = -7.62939e-06
-alignment = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="GridContainer" type="GridContainer" parent="DebugPanel/VBoxContainer"]
-margin_right = 511.0
-margin_bottom = 123.0
-rect_clip_content = true
-focus_neighbour_bottom = NodePath("../Button")
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_constants/vseparation = 3
-columns = 5
-script = ExtResource( 6 )
-__meta__ = {
-"_edit_use_anchors_": false,
-"_editor_description_": "this is the end
-"
-}
-
-[node name="Planet" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
-margin_right = 99.0
-margin_bottom = 14.0
-size_flags_horizontal = 3
-text = "Planet"
-
-[node name="Label2" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
-margin_left = 103.0
-margin_right = 202.0
-margin_bottom = 14.0
-size_flags_horizontal = 3
-text = "Pozicija"
-
-[node name="Label3" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
-margin_left = 206.0
-margin_right = 305.0
-margin_bottom = 14.0
-size_flags_horizontal = 3
-text = "Brzina"
-
-[node name="Label4" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
-margin_left = 309.0
-margin_right = 408.0
-margin_bottom = 14.0
-size_flags_horizontal = 3
-text = "KE"
-
-[node name="Label5" type="Label" parent="DebugPanel/VBoxContainer/GridContainer"]
-margin_left = 412.0
-margin_right = 511.0
-margin_bottom = 14.0
-size_flags_horizontal = 3
-text = "KG"
 
 [node name="ItemList" type="ItemList" parent="DebugPanel"]
 anchor_left = 0.004
@@ -427,23 +380,21 @@ __meta__ = {
 
 [node name="Panel" type="Panel" parent="DebugPanel"]
 anchor_left = 0.004
-anchor_top = 0.247
+anchor_top = 0.002
 anchor_right = 0.994
 anchor_bottom = 0.55
 margin_left = -0.0440001
-margin_top = 2.8
+margin_top = -0.2
 margin_right = 0.065979
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Restart" type="Button" parent="DebugPanel/Panel"]
-anchor_top = 0.2
-anchor_bottom = 0.2
-margin_left = -1.25153
-margin_top = -45.0256
-margin_right = 64.7485
-margin_bottom = -25.0256
+margin_left = 4.21325
+margin_top = 10.0061
+margin_right = 70.2133
+margin_bottom = 30.0061
 focus_neighbour_top = NodePath("../GridContainer")
 group = SubResource( 1 )
 text = "Restart"
@@ -453,12 +404,10 @@ __meta__ = {
 }
 
 [node name="Pause" type="Button" parent="DebugPanel/Panel"]
-anchor_top = 0.2
-anchor_bottom = 0.2
-margin_left = 70.0
-margin_top = -45.0256
-margin_right = 120.0
-margin_bottom = -25.0256
+margin_left = 74.9108
+margin_top = 10.9848
+margin_right = 124.911
+margin_bottom = 30.9848
 focus_neighbour_top = NodePath("../GridContainer")
 group = SubResource( 2 )
 text = "Pause"
@@ -468,12 +417,10 @@ __meta__ = {
 }
 
 [node name="Step" type="Button" parent="DebugPanel/Panel"]
-anchor_top = 0.2
-anchor_bottom = 0.2
-margin_left = 150.0
-margin_top = -45.0256
-margin_right = 200.0
-margin_bottom = -25.0256
+margin_left = 154.911
+margin_top = 10.9848
+margin_right = 204.911
+margin_bottom = 30.9848
 focus_neighbour_top = NodePath("../GridContainer")
 group = SubResource( 2 )
 text = "Step"
@@ -483,12 +430,10 @@ __meta__ = {
 }
 
 [node name="NSteps" type="Button" parent="DebugPanel/Panel"]
-anchor_top = 0.2
-anchor_bottom = 0.2
-margin_left = 205.0
-margin_top = -45.0256
-margin_right = 262.0
-margin_bottom = -25.0256
+margin_left = 209.911
+margin_top = 10.9848
+margin_right = 266.911
+margin_bottom = 30.9848
 focus_neighbour_top = NodePath("../GridContainer")
 group = SubResource( 2 )
 text = "NSteps"
@@ -497,27 +442,43 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="CloseDebug" type="Button" parent="DebugPanel/Panel"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -26.892
+margin_top = 1.68974
+margin_right = 3.10803
+margin_bottom = 21.6897
+rect_scale = Vector2( 0.92, 1 )
+text = "X"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Open" type="Button" parent="DebugPanel/Panel"]
 anchor_left = 1.0
-anchor_top = 0.2
 anchor_right = 1.0
-anchor_bottom = 0.2
-margin_left = -88.7205
-margin_top = -45.5593
-margin_right = 1.89197
-margin_bottom = -25.5593
+margin_left = -164.142
+margin_top = 9.89711
+margin_right = -73.5298
+margin_bottom = 29.8971
+rect_scale = Vector2( 0.92, 1 )
 text = "Open"
 script = ExtResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PropsEditGrid" type="GridContainer" parent="DebugPanel/Panel"]
-anchor_top = 0.106
+[node name="DebugProps" type="GridContainer" parent="DebugPanel/Panel"]
+anchor_left = 0.002
+anchor_top = 0.143
 anchor_right = 0.998
 anchor_bottom = 1.0
-margin_top = 0.0259991
+margin_left = -0.0120001
+margin_top = -0.0470009
 margin_right = 0.0119934
+columns = 4
 script = ExtResource( 12 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -536,9 +497,101 @@ current_path = "C:/Users/Branimir/source/repos/nbody/Nbody.Gui/"
 script = ExtResource( 8 )
 
 [node name="PlanetSystem" type="MultiMeshInstance" parent="."]
-multimesh = SubResource( 9 )
+multimesh = SubResource( 8 )
 script = ExtResource( 13 )
 
 [node name="PlanetSystemArrows" type="MultiMeshInstance" parent="."]
-multimesh = SubResource( 10 )
+multimesh = SubResource( 9 )
 script = ExtResource( 14 )
+
+[node name="ScrollContainer" type="PanelContainer" parent="."]
+anchor_left = 0.511
+anchor_top = 0.002
+anchor_right = 1.0
+anchor_bottom = 0.998
+margin_left = -0.264038
+margin_top = -0.2
+margin_right = 1.0
+margin_bottom = 0.200012
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VSplitContainer" type="VSplitContainer" parent="ScrollContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 495.0
+margin_bottom = 591.0
+
+[node name="HSplitContainer" type="HSplitContainer" parent="ScrollContainer/VSplitContainer"]
+margin_right = 488.0
+margin_bottom = 200.0
+
+[node name="PlanetsContainer" type="VBoxContainer" parent="ScrollContainer/VSplitContainer/HSplitContainer"]
+margin_right = 238.0
+margin_bottom = 200.0
+rect_min_size = Vector2( 0, 200 )
+size_flags_horizontal = 3
+size_flags_vertical = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlanetsList" type="ItemList" parent="ScrollContainer/VSplitContainer/HSplitContainer/PlanetsContainer"]
+margin_right = 238.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+allow_reselect = true
+allow_rmb_select = true
+script = ExtResource( 16 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlanetCreatorFunctionsCotainer" type="VBoxContainer" parent="ScrollContainer/VSplitContainer/HSplitContainer"]
+margin_left = 250.0
+margin_right = 488.0
+margin_bottom = 200.0
+rect_min_size = Vector2( 0, 200 )
+size_flags_horizontal = 3
+size_flags_vertical = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CreatorFunctions" type="ItemList" parent="ScrollContainer/VSplitContainer/HSplitContainer/PlanetCreatorFunctionsCotainer"]
+margin_right = 238.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+allow_reselect = true
+allow_rmb_select = true
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VSplitContainer" type="VSplitContainer" parent="ScrollContainer/VSplitContainer"]
+margin_top = 212.0
+margin_right = 488.0
+margin_bottom = 584.0
+
+[node name="GridContainer" type="GridContainer" parent="ScrollContainer/VSplitContainer/VSplitContainer"]
+margin_right = 488.0
+margin_bottom = 340.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 17 )
+
+[node name="GridContainer2" type="GridContainer" parent="ScrollContainer/VSplitContainer/VSplitContainer"]
+margin_top = 352.0
+margin_right = 488.0
+margin_bottom = 372.0
+
+[node name="DoIt" type="Button" parent="ScrollContainer/VSplitContainer/VSplitContainer/GridContainer2"]
+margin_right = 43.0
+margin_bottom = 20.0
+text = "Do it"

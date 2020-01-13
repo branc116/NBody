@@ -11,21 +11,29 @@ namespace NBody.Gui
     {
         public override void _Ready()
         {
-            var props = GetProps(typeof(SourceOfTruth), () => null).ToList();
+            var name = this.Name;
+            var props = GetProps(typeof(SourceOfTruth), () => null, name).ToList();
             Console.WriteLine($"Number of pros: {props.Count}");
             foreach (var prop in props)
             {
                 this.AddChild(prop);
             };
-            this.Columns = 4;
+            //this.Columns = 4;
         }
-        private IEnumerable<Control> GetProps(Type staticClass, Func<object> obj)
+        private IEnumerable<Control> GetProps(Type staticClass, Func<object> obj, string name = default)
         {
             return staticClass.GetFields()
                 .Where(i => i.CustomAttributes.Select(j => j.AttributeType).Log().Any(j => j == typeof(PropEditAttribute)))
+                .Where(i =>
+                {
+                    if (name == null)
+                        return true;
+                    return i.GetCustomAttributes(typeof(PropEditAttribute), true).Cast<PropEditAttribute>().First().Name?.Contains(name) ?? true;
+                })
                 .SelectMany(i =>
                 {
-                    if (!i.FieldType.IsPrimitive && i.FieldType != typeof(string))
+                    var atr = i.GetCustomAttributes(typeof(PropEditAttribute), true).Cast<PropEditAttribute>().First();
+                    if (!i.FieldType.IsPrimitive && i.FieldType != typeof(string) && !i.FieldType.IsValueType)
                     {
                         return GetProps(i.FieldType, () => i.GetValue(obj()));
                     }
@@ -34,7 +42,7 @@ namespace NBody.Gui
                     {
                         Text = i.Name
                     };
-                    var input = i.FieldType == typeof(bool) ? new DynamicToggleButton(i, obj) as Control : new DynamicLineEdit(i, obj) as Control;
+                    var input = i.FieldType == typeof(bool) ? new DynamicToggleButton(i, obj) as Control : new DynamicLineEdit(i, obj, atr.Editable) as Control;
                     return new Control[] { lable, input };
                 });
         }

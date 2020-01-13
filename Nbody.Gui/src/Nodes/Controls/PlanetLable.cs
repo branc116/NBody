@@ -1,6 +1,5 @@
 ﻿using Godot;
 using NBody.Core;
-using NBody.Gui.Extensions;
 
 namespace NBody.Gui
 {
@@ -30,13 +29,13 @@ namespace NBody.Gui
                 case DisplayPlanetProperty.Name:
                     return Planet.Name.Length > 20 ? Planet.Name.Substring(0, 20) : Planet.Name;
                 case DisplayPlanetProperty.Velocity:
-                    return Planet.Velocity.ToStrV3();
+                    return Planet.Velocity.ToString();
                 case DisplayPlanetProperty.Position:
-                    return Planet.Position.ToStrV3();
+                    return Planet.Position.ToString();
                 case DisplayPlanetProperty.KineticEnergy:
-                    return Planet.KineticEnergy.ToString("F3");
+                    return Planet.KineticEnergy.ToString();
                 case DisplayPlanetProperty.Momentum:
-                    return Planet.Momentum.ToStrV3();
+                    return Planet.Momentum.ToString();
             }
             return "";
         }

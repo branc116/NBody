@@ -18,6 +18,7 @@ namespace NBody.Gui.Nodes.Spatials
         }
         public void UpdateValue(int index)
         {
+
             Transform = new Transform(Basis.Identity, Planet.Position.ToV3())
                 .TargetTo2(Planet.Velocity.ToV3().Normalized(), Vector3.Up)
                 .Scale2(new Vector3(1f, Mathf.Log(1f + Planet.Velocity.ToV3().LengthSquared()), 1f));

@@ -1,4 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using Nbody.Gui.Core;
 using NBody.Core;
 using System;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace NBody.Gui.InputModels
             return new PlanetSystem
             {
                 GravitationalConstant = GravitationalConstant,
-                DeltaTimePerStep = Dt,
+                //DeltaTimePerStep = Dt,
                 Planets = Planets?.Select(i => i.ToPlanet()).ToList()
             };
         }
@@ -51,8 +51,8 @@ namespace NBody.Gui.InputModels
             {
                 Mass = Mass,
                 Name = Name,
-                Position = CreateVector.Dense(Position),
-                Velocity = CreateVector.Dense(Velocity),
+                Position = new Point3(Position[0], Position[1], Position[2]),
+                Velocity = new Point3(Velocity[0], Velocity[1], Velocity[2]),
                 Radius = Radius
             };
         }

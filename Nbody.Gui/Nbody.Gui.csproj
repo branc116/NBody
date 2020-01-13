@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Tools</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,11 +8,12 @@
     <OutputPath>.mono\temp\bin\$(Configuration)</OutputPath>
     <RootNamespace>Nbody.Gui</RootNamespace>
     <AssemblyName>Nbody.Gui</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <BaseIntermediateOutputPath>.mono\temp\obj</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)\$(Configuration)</IntermediateOutputPath>
     <ApiConfiguration Condition=" '$(Configuration)' != 'Release' ">Debug</ApiConfiguration>
     <ApiConfiguration Condition=" '$(Configuration)' == 'Release' ">Release</ApiConfiguration>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,7 +53,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GodotSharp">
-      <HintPath>..\..\NotMyLibs\godot\modules\mono\glue\GodotSharp\GodotSharp\bin\Release\GodotSharp.dll</HintPath>
+      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GodotSharpEditor" Condition=" '$(Configuration)' == 'Tools' ">
+      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharpEditor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
@@ -73,9 +77,13 @@
     <Compile Include="src\Extensions\EnumerableExtensions.cs" />
     <Compile Include="src\Extensions\FunctionExtensions.cs" />
     <Compile Include="src\Extensions\VectorExtensions.cs" />
+    <Compile Include="src\InputModels\CoreModel.cs" />
     <Compile Include="src\InputModels\PlanetSystemInputModel.cs" />
     <Compile Include="src\InputModels\PlotsModel.cs" />
+    <Compile Include="src\InputModels\SimulationModel.cs" />
+    <Compile Include="src\InputModels\VisualizationModel.cs" />
     <Compile Include="src\IPlanetFab.cs" />
+    <Compile Include="src\Kernels\ClKernel.cs" />
     <Compile Include="src\Nodes\Controls\ControlledButton.cs" />
     <Compile Include="src\Nodes\Controls\DebugGrid.cs" />
     <Compile Include="src\Nodes\Controls\DebugList.cs" />
@@ -86,6 +94,8 @@
     <Compile Include="src\Nodes\Controls\FunctionsManager.cs" />
     <Compile Include="src\Nodes\Controls\GraphContainer.cs" />
     <Compile Include="src\Nodes\Controls\LinesDrawer.cs" />
+    <Compile Include="src\Nodes\Controls\PlanetCreatorFunctionList.cs" />
+    <Compile Include="src\Nodes\Controls\PlanetCreatorParameters.cs" />
     <Compile Include="src\Nodes\Controls\PlanetLable.cs" />
     <Compile Include="src\Nodes\Controls\PlanetSelectList.cs" />
     <Compile Include="src\Nodes\Controls\PlanetSystemSelected.cs" />
@@ -93,16 +103,16 @@
     <Compile Include="src\Nodes\Controls\ScrollPlanetDebugList.cs" />
     <Compile Include="src\Nodes\Spatials\Nbody.cs" />
     <Compile Include="src\Nodes\Spatials\PlanetArrow.cs" />
-    <Compile Include="src\Nodes\Spatials\PlanetLight.cs" />
     <Compile Include="src\Nodes\Spatials\PlanetModel.cs" />
     <Compile Include="src\Nodes\Spatials\PlanetSystemArrowMultiMesh.cs" />
     <Compile Include="src\Nodes\Spatials\PlanetSystemMultyMesh.cs" />
-    <Compile Include="src\OpenFileDialogButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\RestartButton.cs" />
     <Compile Include="src\SourceOfTruth.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ILGPU">
+      <Version>0.7.1</Version>
+    </PackageReference>
     <PackageReference Include="MathNet.Numerics">
       <Version>4.9.0</Version>
     </PackageReference>

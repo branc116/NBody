@@ -56,8 +56,6 @@ namespace NBody.Gui
         }
         public override void _Process(float delta)
         {
-            if (!IsVisibleInTree())
-                return;
             if (_oldToggle != Pressed)
             {
                 TextToProp();

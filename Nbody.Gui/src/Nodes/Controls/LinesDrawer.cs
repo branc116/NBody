@@ -1,19 +1,13 @@
 ﻿using Godot;
 using Nbody.Gui.InputModels;
 using Nbody.Gui.src.Nodes.Controls;
-using NBody.Core;
 using NBody.Gui;
 using NBody.Gui.Extensions;
-using NBody.Gui.Nodes.Spatials;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nbody.Gui.Nodes.Controls
 {
-    public class LinesDrawer : Node2D   
+    public class LinesDrawer : Node2D
     {
         private readonly PlotsModel _plotsModel = SourceOfTruth.PlotModel;
         private readonly FunctionsManager _functionsManager = new FunctionsManager();
@@ -24,20 +18,32 @@ namespace Nbody.Gui.Nodes.Controls
             if (!_plotsModel.PlotVisible)
                 return;
             var meteraial = base.Material as ShaderMaterial;
-            meteraial.SetShaderParam("center", SourceOfTruth.PlotCenter);
-            meteraial.SetShaderParam("offset", SourceOfTruth.PlotOffset);
-            meteraial.SetShaderParam("width", SourceOfTruth.PlotWidth);
-            meteraial.SetShaderParam("resolution", SourceOfTruth.PlotResoultion);
+            meteraial.SetShaderParam("center", _plotsModel.PlotCenter);
+            meteraial.SetShaderParam("offset", _plotsModel.PlotOffset);
+            meteraial.SetShaderParam("width", _plotsModel.PlotWidth);
+            meteraial.SetShaderParam("resolution", _plotsModel.PlotResoultion);
             _points = _functionsManager.GetPoints();
             if (_points != null && _points.Length > 2)
+            {
                 Update();
+                var (min, max) = _points.GetMinMax();
+                _plotsModel.Min = min;
+                _plotsModel.Max = max;
+                if (_plotsModel.Follow)
+                {
+                    var diff = max - min;
+                    _plotsModel.PlotWidth = Math.Max(diff.x * 1.5f, diff.y * 2f);
+                    var center = (min + max) / 2;
+                    _plotsModel.PlotCenterX = center.x;
+                    _plotsModel.PlotCenterY = center.y - _plotsModel.PlotWidth * 0.1f;
+                }
+            }
         }
         public override void _Draw()
         {
             if (_points != null)
             {
-                DrawPolyline(_points, Color.Color8(0, 0, 0));
-                Console.WriteLine($"MaxX: {_points.Max(i => i.x)} MinX: {_points.Min(i => i.x)}");
+                DrawPolyline(_points, Color.Color8(0, 0, 0, 255));
             }
             base._Draw();
         }
