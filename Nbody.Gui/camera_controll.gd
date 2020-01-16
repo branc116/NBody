@@ -38,6 +38,7 @@ export var gui_action = "ui_cancel"
 
 # Intern variables.
 var _mouse_position = Vector2(0.0, 0.0)
+var _mouse_pressed = false;
 var _yaw = 0.0
 var _pitch = 0.0
 var _total_yaw = 0.0
@@ -66,7 +67,7 @@ func _input(event):
     if mouselook:
         if event is InputEventMouseMotion:
             _mouse_position = event.relative
-
+            _mouse_pressed = event.button_mask == 2
     if movement:
         if event.is_action_pressed(forward_action):
             _direction.z = -1
@@ -93,7 +94,8 @@ func _process(delta):
     if privot:
         _update_distance()
     if mouselook:
-        _update_mouselook()
+        if (_mouse_pressed):
+            _update_mouselook()
     if movement:
         _update_movement(delta)
 
@@ -130,8 +132,8 @@ func _update_movement(delta):
 
 func _update_mouselook():
     _mouse_position *= sensitivity
-    _yaw = _yaw * smoothness + _mouse_position.x * (1.0 - smoothness)
-    _pitch = _pitch * smoothness + _mouse_position.y * (1.0 - smoothness)
+    _yaw = _yaw * smoothness - _mouse_position.x * (1.0 - smoothness)
+    _pitch = _pitch * smoothness - _mouse_position.y * (1.0 - smoothness)
     _mouse_position = Vector2(0, 0)
 
     if yaw_limit < 360:

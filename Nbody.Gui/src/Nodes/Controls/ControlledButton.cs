@@ -1,7 +1,7 @@
 ﻿using Godot;
-using Nbody.Gui.src.Controllers;
+using NBody.Gui.src.Controllers;
 
-namespace Nbody.Gui.src.Nodes.Controls
+namespace NBody.Gui.src.Nodes.Controls
 {
     public class ControlledButton : Button
     {

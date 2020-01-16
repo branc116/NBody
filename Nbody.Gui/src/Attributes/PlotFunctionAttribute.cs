@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nbody.Gui.Attributes
+namespace NBody.Gui.Attributes
 {
     public class PlotFunctionAttribute : Attribute
     {

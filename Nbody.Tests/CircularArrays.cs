@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NBody.Core;
 
-namespace Nbody.Tests
+namespace NBody.Tests
 {
     [TestClass]
     public class CircularArrays

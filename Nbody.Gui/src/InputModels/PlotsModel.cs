@@ -8,7 +8,7 @@ using godot_real_t = System.Double;
 using godot_real_t = System.Single;
 #endif
 
-namespace Nbody.Gui.InputModels
+namespace NBody.Gui.InputModels
 {
     public class PlotsModel
     {
@@ -29,7 +29,10 @@ namespace Nbody.Gui.InputModels
         public Vector2 Max;
         [PropEdit]
         public bool Follow = false;
-
+        [PropEdit]
+        public bool XLogScale = false;
+        [PropEdit]
+        public bool YLogScale = false;
         public Vector2 PlotResoultion;
         public Planet[] SelectedPlanets;
         public string SelectedFunc;

@@ -3,62 +3,19 @@
   "Dt": 0.001,
   "StepsPerFrame":  100,
   "Planets": [
-
-    {
-      "Position": [ -10, 0, 0 ],
-      "Velocity": [ 0, -1, 0 ],
-      "Mass": 2,
-      "Radius": 1,
-      "Name": "Sun3"
-    },
-    //{
-    //  "Position": [ 10, 0, 0 ],
-    //  "Velocity": [ -1, 0, 0 ],
-    //  "Mass": 2,
-    //  "Radius": 1,
-    //  "Name": "Sun5"
-    //},
     {
       "Position": [ 0, 0, 0 ],
       "Velocity": [ 0, 0, 0 ],
-      "Mass": 2,
-      "Radius": 1,
+      "Mass": 10000,
+      "Radius": 5,
       "Name": "Sun"
     },
     {
-      "Position": [ 10, 0, 0 ],
-      "Velocity": [ 0, 1, 0 ],
-      "Mass": 2,
+      "Position": [ 200, 0, 0 ],
+      "Velocity": [ 0, 0, 21.224 ],
+      "Mass": 10,
       "Radius": 1,
-      "Name": "Sun2"
+      "Name": "Earth"
     }
-    //{
-    //  "Position": [ 60, 0, 0 ],
-    //  "Velocity": [ 0, 0, 5.5 ],
-    //  "Mass": 3,
-    //  "Radius": 1,
-    //  "Name": "Earth"
-    //},
-    //{
-    //  "Position": [ 64, 0, 0 ],
-    //  "Velocity": [ 0, 0, 7.7 ],
-    //  "Mass": 0.001,
-    //  "Radius": 0.01,
-    //  "Name": "Moon"
-    //},
-    //{
-    //  "Position": [ 0, 61, 0 ],
-    //  "Velocity": [ 0, 0, 5 ],
-    //  "Mass": 1,
-    //  "Radius": 0.1,
-    //  "Name": "mars"
-    //},
-    //{
-    //  "Position": [ 6500, 0, 0 ],
-    //  "Velocity": [ -100, 0, 0 ],
-    //  "Mass": 60,
-    //  "Radius": 5,
-    //  "Name": "asteroid"
-    //}
   ]
 }

@@ -1,10 +1,11 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
-using Nbody.Gui.Core;
+using NBody.Gui.Core;
 using NBody.Gui;
 using NBody.Gui.InputModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System;
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
@@ -44,9 +45,18 @@ namespace NBody.Core
         public bool SimulateColitions { get => _simulationModel.SimulateColitions; set => _simulationModel.SimulateColitions = value; }
         public real_t GravitationalConstant { get => _simulationModel.GravitationalConstant; set => _simulationModel.GravitationalConstant = value; }
         public real_t Dt { get => _simulationModel.DeltaTimePerStep; set => _simulationModel.DeltaTimePerStep = value; }
-
+        public DateTime PlanetNamesLastChanged { get; private set; } = DateTime.Now;
+        public PlanetSystem()
+        {
+            Planets = new List<Planet>();
+        }
         public PlanetSystem StepCL(int n = 1)
         {
+            if (_nbodyClKernel is null)
+            {
+                Step(n);
+                return this;
+            }
             _nbodyClKernel.Step(this, n);
             NStep += n;
             CurTime += n * Dt;
@@ -90,10 +100,16 @@ namespace NBody.Core
             CurTime += dtps;
             return this;
         }
+
+        internal void ClearPlanets()
+        {
+            Planets.Clear();
+            PlanetNamesLastChanged = DateTime.Now;
+        }
+
         public void MergePlanets()
         {
             var orderedPlanets = Planets.OrderByDescending(i => i.Mass).ToList();
-            var normal = CreateVector.Dense(new[] { (real_t)0, (real_t)0, (real_t)0 });
             for (var i = 0; i < orderedPlanets.Count; i++)
             {
                 var mergeTo = orderedPlanets[i];
@@ -106,8 +122,11 @@ namespace NBody.Core
                     {
                         Planets.Remove(mergeFrom);
                         mergeTo.MegeWith(mergeFrom);
+                        PlanetNamesLastChanged = DateTime.Now;
                     }
                 }
+                var ft = new ILGPU.Util.Double3(0, 0, 0);
+                var it = ft* 2f;
             }
         }
         public real_t TotalMass()
@@ -144,6 +163,26 @@ namespace NBody.Core
                 a.Append(planet.ToString());
             }
             return a.ToString();
+        }
+        public void AddPlanets(params Planet[] planets)
+        {
+            if (planets is null || planets.Length == 0)
+                return;
+            var names = Planets.Select(j => j.Name).ToHashSet();
+            var planetsToAdd = planets.Select(i => { i.Name += names.Contains(i.Name) ? DateTime.Now.Ticks.ToString() : "";return i; }).ToList();
+            if (planetsToAdd.Count == 0)
+                return;
+            Planets.AddRange(planetsToAdd);
+            PlanetNamesLastChanged = DateTime.Now;
+        }
+        public void RemovePlanets(params Planet[] planets)
+        {
+            if (planets is null | planets.Length == 0)
+            {
+                return;
+            }
+            Planets.RemoveAll(i => planets.Select(j => j.Name).Contains(i.Name));
+            PlanetNamesLastChanged = DateTime.Now;
         }
     }
 }

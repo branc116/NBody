@@ -11,7 +11,7 @@ namespace NBody.Gui
         public override void _Process(float delta)
         {
             var system = SourceOfTruth.System;
-            if (!_visualizationModel.IsDebugShown || system is null)
+            if (system is null || !this.IsVisibleInTree())
                 return;
 
             Clear();

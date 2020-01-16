@@ -3,6 +3,8 @@ using MathNet.Numerics.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using static Godot.Mathf;
+using NBody.Gui.Core;
+
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
@@ -17,7 +19,7 @@ namespace NBody.Gui.Extensions
 {
     public static class VectorExtensions
     {
-        public static Vector3 ToV3(this Nbody.Gui.Core.Point3 point)
+        public static Vector3 ToV3(this NBody.Gui.Core.Point3 point)
         {
             return new Vector3((godot_real_t)point.x, (godot_real_t)point.y, (godot_real_t)point.z);
         }
@@ -111,6 +113,18 @@ namespace NBody.Gui.Extensions
                 new Vector3(y * x * (1 - Cos(rad)) + z * Sin(rad), Cos(rad) + y * y * (1 - Cos(rad)), y * z * (1 - Cos(rad)) - x * Sin(rad)),
                 new Vector3(z * x * (1 - Cos(rad)) - y * Sin(rad), z * y * (1 - Cos(rad)) + x * Sin(rad), Cos(rad) + z * z * (1 - Cos(rad))),
                 new Vector3(0, 0, 0));
+        }
+        public static Point3 Mul(this Point3 a, Basis b)
+        {
+            var x = a.x * b.x.x + a.y * b.y.x + a.z * b.z.x;
+            var y = a.x * b.x.y + a.y * b.y.y + a.z * b.z.y;
+            var z = a.x * b.x.z + a.y * b.y.z + a.z * b.z.z;
+            return new Point3(x, y, z);
+        }
+        public static Point3 RotateAround(this Point3 toRotate, Point3 rotateAround, real_t ammound)
+        {
+            var rotated = toRotate.Mul(Rotate(new Vector3((godot_real_t)rotateAround.x, (godot_real_t)rotateAround.y, (godot_real_t)rotateAround.z), (godot_real_t)ammound).basis);
+            return rotated;
         }
         public static Transform TargetTo2(this Transform tran, Vector3 lookAt, Vector3 up)
         {

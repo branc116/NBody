@@ -1,6 +1,11 @@
-﻿using System;
-
-namespace Nbody.Gui.src.Extensions
+﻿using NBody.Gui.Core;
+using System;
+#if REAL_T_IS_DOUBLE
+using real_t = System.Double;
+#else
+using real_t = System.Single;
+#endif
+namespace NBody.Gui.Extensions
 {
     public static class FunctionExtensions
     {
@@ -14,6 +19,11 @@ namespace Nbody.Gui.src.Extensions
                 var dr = (r - func(initValue - dt)) / dt;
                 initValue -= r / dr;
             } while (maxSteps-- > 0 && Math.Abs(r) > percision);
+            if (Math.Abs(r) > percision)
+            {
+                Console.WriteLine($"Numerical solution was not found, using the solution with error of {r}");
+                Console.WriteLine(new System.Diagnostics.StackTrace().ToString());
+            }
             return initValue;
         }
     }

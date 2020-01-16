@@ -52,7 +52,7 @@ namespace NBody.Gui
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Can't parse {_fieldInfo.Name}, {Text} {ex}");
+                    //Console.WriteLine($"Can't parse {_fieldInfo.Name}, {Text} {ex}");
                 }
             }
         }

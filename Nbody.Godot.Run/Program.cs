@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using Nbody.Gui.Core;
+using NBody.Gui.Core;
 using System.Collections.Generic;
 
 

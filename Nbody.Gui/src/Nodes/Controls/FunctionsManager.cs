@@ -1,13 +1,13 @@
 ﻿using Godot;
-using Nbody.Gui.Attributes;
-using Nbody.Gui.InputModels;
+using NBody.Gui.Attributes;
+using NBody.Gui.InputModels;
 using NBody.Core;
 using NBody.Gui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Nbody.Gui.src.Nodes.Controls
+namespace NBody.Gui.src.Nodes.Controls
 {
     public class FunctionsManager
     {

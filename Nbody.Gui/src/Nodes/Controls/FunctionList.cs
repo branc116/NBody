@@ -1,9 +1,9 @@
 ﻿using Godot;
-using Nbody.Gui.InputModels;
+using NBody.Gui.InputModels;
 using NBody.Gui;
 using System.Linq;
 
-namespace Nbody.Gui.src.Nodes.Controls
+namespace NBody.Gui.src.Nodes.Controls
 {
     public class FunctionList : ItemList
     {

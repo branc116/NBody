@@ -1,13 +1,14 @@
 ﻿using ILGPU;
 using ILGPU.Runtime;
 using ILGPU.Runtime.OpenCL;
-using Nbody.Gui.Core;
+using NBody.Gui.Core;
 using NBody.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ILGPU.Util;
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
@@ -17,10 +18,10 @@ namespace NBody.Gui.Kernels
 {
     public readonly struct NbodyKernelModel
     {
-        public readonly real_t G;
-        public readonly real_t dt;
+        public readonly float G;
+        public readonly float dt;
         public readonly int N;
-        public NbodyKernelModel(real_t G, real_t dt, int n)
+        public NbodyKernelModel(float G, float dt, int n)
         {
             this.G = G;
             this.dt = dt;
@@ -29,13 +30,13 @@ namespace NBody.Gui.Kernels
     }
     public readonly struct PlanetKernelModel
     {
-        public readonly Point3 Position;
-        public readonly Point3 Velocity;
-        public readonly real_t Mass;
-        public readonly real_t Radius;
+        public readonly Point3Float Position;
+        public readonly Point3Float Velocity;
+        public readonly float Mass;
+        public readonly float Radius;
         public readonly int WillMerge;
 
-        public PlanetKernelModel(Point3 position, Point3 velocity, real_t mass, real_t radius, int willMerge)
+        public PlanetKernelModel(Point3Float position, Point3Float velocity, float mass, float radius, int willMerge)
         {
             Position = position;
             Velocity = velocity;
@@ -50,9 +51,11 @@ namespace NBody.Gui.Kernels
         private readonly Accelerator _accelerator;
         private readonly Action<Index, ArrayView<PlanetKernelModel>, NbodyKernelModel, ArrayView<PlanetKernelModel>> _kernel;
 
-        public static void NbodyKernel(Index i, ArrayView<PlanetKernelModel> planets, NbodyKernelModel model, ArrayView<PlanetKernelModel> outPlanet)
+        public bool Ok { get; }
+
+        public static void NbodyKernelPnt(Index i, ArrayView<PlanetKernelModel> planets, NbodyKernelModel model, ArrayView<PlanetKernelModel> outPlanet)
         {
-            
+
             var planet = planets[i];
             var newPosition = planet.Position;
             var newVelocity = planet.Velocity;
@@ -65,22 +68,22 @@ namespace NBody.Gui.Kernels
                 var position = interacts.Position;
                 var n = planet.Position - position;
 
-                var norm = (real_t)n.LengthSquared();
+                var norm = n.LengthSquared();
                 var absoluteAcceleration = model.G * interacts.Mass / (norm);
                 var aTdT = -1 * absoluteAcceleration * model.dt;
-                newVelocity = newVelocity + n.NormalizedGPU() * aTdT;
+                newVelocity += n.Normalized() * aTdT;
                 var dist = interacts.Radius + planet.Radius;
                 if (norm < dist * dist)
                     willMerge = j;
             }
-            newPosition += newVelocity * model.dt;
+            newPosition += (newVelocity * model.dt);
             outPlanet[i] = new PlanetKernelModel(newPosition, newVelocity, planet.Mass, planet.Radius, willMerge);
         }
-        
-        public void Step(PlanetSystem planetSystem, int n = 1)
+
+        public void StepPnt(PlanetSystem planetSystem, int n = 1)
         {
-            var model = new NbodyKernelModel(planetSystem.GravitationalConstant, planetSystem.Dt, planetSystem.Planets.Count);
-            var planets = planetSystem.Planets.Select(i => new PlanetKernelModel(i.Position, i.Velocity, i.Mass, i.Radius, -1)).ToArray();
+            var model = new NbodyKernelModel((float)planetSystem.GravitationalConstant, (float)planetSystem.Dt, planetSystem.Planets.Count);
+            var planets = planetSystem.Planets.Select(i => new PlanetKernelModel(i.Position, i.Velocity, (float)i.Mass, (float)i.Radius, -1)).ToArray();
             using (var dataSource = _accelerator.Allocate<PlanetKernelModel>(model.N))
             //using (var dataSource2 = _accelerator.Allocate<NbodyKernelModel>(1))
             using (var dataTarget = _accelerator.Allocate<PlanetKernelModel>(model.N))
@@ -90,13 +93,14 @@ namespace NBody.Gui.Kernels
                 do
                 {
                     _kernel(model.N, dataSource.ToArrayView(), model, dataTarget.ToArrayView());
+                    
                     _accelerator.Synchronize();
-                    if (n > 0)
+                    if (n > 1)
                     {
                         dataSource.CopyFrom(dataTarget, 0, 0, model.N);
                         dataTarget.MemSetToZero();
                     }
-                } while (n-- >= 0);
+                } while (--n > 0);
                 var outPlanets = dataTarget.GetAsArray();
                 for (int i = 0; i < planetSystem.Planets.Count; i++)
                 {
@@ -106,14 +110,15 @@ namespace NBody.Gui.Kernels
                 }
                 return;
             }
-
         }
-
+        public void Step(PlanetSystem planetSystem, int n = 1)
+        {
+            StepPnt(planetSystem, n);
+        }
         public void Dispose()
         {
             _context.Dispose();
             _accelerator.Dispose();
-
         }
 
         public NbodyClKernel()
@@ -123,11 +128,17 @@ namespace NBody.Gui.Kernels
                 var context = new Context();
                 _context = context;
                 _accelerator = CLAccelerator.Create(_context, CLAccelerator.CLAccelerators[0]);
-                _kernel = _accelerator.LoadStreamKernel<Index, ArrayView<PlanetKernelModel>, NbodyKernelModel, ArrayView<PlanetKernelModel>>(NbodyKernel);
+                _kernel = _accelerator.LoadStreamKernel<Index, ArrayView<PlanetKernelModel>, NbodyKernelModel, ArrayView<PlanetKernelModel>>(NbodyKernelPnt);
+                Ok = true;
             }catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
+        }
+        public static NbodyClKernel GetNbodyClKernel()
+        {
+            var nbody = new NbodyClKernel();
+            return nbody.Ok ? nbody : null;
         }
     }
 }

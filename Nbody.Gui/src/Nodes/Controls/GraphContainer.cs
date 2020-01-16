@@ -1,5 +1,5 @@
 using Godot;
-using Nbody.Gui.InputModels;
+using NBody.Gui.InputModels;
 using NBody.Gui;
 using System;
 

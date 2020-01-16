@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nbody.Gui.src.Extensions;
+using NBody.Gui.Extensions;
 
-namespace Nbody.Tests
+namespace NBody.Tests
 {
     [TestClass]
     public class NumericSolve

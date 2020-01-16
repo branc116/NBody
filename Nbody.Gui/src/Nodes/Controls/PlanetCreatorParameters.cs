@@ -1,5 +1,8 @@
 ﻿using Godot;
 using NBody.Core;
+using NBody.Gui.Attributes;
+using NBody.Gui.Core;
+using NBody.Gui.Extensions;
 using NBody.Gui.InputModels;
 using System;
 using System.Collections.Generic;
@@ -23,8 +26,8 @@ namespace NBody.Gui.Nodes.Controls
                 .Where(i => i.ParameterType != typeof(Planet) && i.ParameterType != typeof(Planet[]))
                 .Select(i => new ParameterModel(i))
                 .ToList();
-
-            PlanetParametes = ps.Length == 1 && ps[0].ParameterType == typeof(Planet[]) ? -1 : ps.Length;
+            Method = methodInfo;
+            PlanetParametes = ps.Length == 1 && ps[0].ParameterType == typeof(Planet[]) ? -1 : ps.TakeWhile(i => i.ParameterType == typeof(Planet)).Count();
         }
         public void Execute(Planet[] planets)
         {
@@ -39,7 +42,7 @@ namespace NBody.Gui.Nodes.Controls
         }
         public IEnumerable<Node> GetNodes()
         {
-            foreach(var param in ParameterModels.SelectMany(i => i.GetNodes()))
+            foreach (var param in ParameterModels.SelectMany(i => i.GetNodes()))
             {
                 yield return param;
             }
@@ -51,11 +54,27 @@ namespace NBody.Gui.Nodes.Controls
                 .SelectMany(mm)
                 .ToList();
         }
-        private static IEnumerable<MethodModel> mm(Type i)
+        private static IEnumerable<MethodModel> mm(Type type)
         {
-            var instance = i.GetConstructor(new Type[] { })?.Invoke(new object[] { }) ?? null;
+            var hasAttribute = type.CustomAttributes.Any(j => j.AttributeType == typeof(PlanetCreatorAttribute));
+            if (!hasAttribute)
+                yield break;
+            var instance = type.GetConstructor(new Type[] { })?.Invoke(new object[] { }) ?? null;
             if (instance is null) yield break;
-            foreach (var meth in i.GetMethods().Where(j => j.GetBaseDefinition().ReflectedType == j.ReflectedType).Select(j => new MethodModel(j, instance)))
+            foreach (var meth in type.GetMethods().Where(j => {
+                var ret = j.GetBaseDefinition().ReflectedType == j.ReflectedType;
+                if (!ret)
+                    return false;
+                var nonValidParams = j.GetParameters()
+                    .SkipWhile(k => k.ParameterType == typeof(Planet))
+                    .Where(k => k.ParameterType != typeof(bool) && 
+                        k.ParameterType != typeof(string) && 
+                        k.ParameterType.GetMethod("Parse", new Type[] { typeof(string) }) is null)
+                    .ToList();
+                if (nonValidParams.Any())
+                    Console.WriteLine(nonValidParams.Select(k => k.ParameterType.Name).Aggregate((ii, jj) => $"{ii}, {jj}"));
+                return !nonValidParams.Any();
+            }).Log(). Select(j => new MethodModel(j, instance)))
                     yield return meth;
         }
     }
@@ -79,8 +98,10 @@ namespace NBody.Gui.Nodes.Controls
             Lable = new Label { Text = parameterInfo.Name };
             if (parameterInfo.ParameterType == typeof(bool))
                 DynamicInput = new CheckBox { Pressed = value is bool b ? b : false };
+            else if (parameterInfo.ParameterType == typeof(Point3))
+                DynamicInput = new LineEdit { Text = "(0, 0, 0)", SizeFlagsHorizontal = (int)Godot.Control.SizeFlags.ExpandFill };
             else
-                DynamicInput = new LineEdit { Text = value?.ToString() };
+                DynamicInput = new LineEdit { Text = value?.ToString(), SizeFlagsHorizontal = (int)Godot.Control.SizeFlags.ExpandFill };
         }
         public object GetValue()
         {
@@ -112,7 +133,7 @@ namespace NBody.Gui.Nodes.Controls
             {
                 var selectedMethod = _planetCreatorModel.MethodSelected;
                 var selectedPlanets = _planetCreatorModel.SelectedPlanets;
-                var method = Get(selectedPlanets.Length, selectedMethod);
+                var method = Get(selectedPlanets?.Length ?? 0, selectedMethod);
                 method.Execute(selectedPlanets);
             };
         }
@@ -120,11 +141,12 @@ namespace NBody.Gui.Nodes.Controls
             _methodModels.FirstOrDefault(i => i.Method.Name == name && n == i.PlanetParametes) ?? _methodModels.FirstOrDefault(i => i.Method.Name == name && -1 == i.PlanetParametes);
         public override void _Process(float delta)
         {
-            if (_planetCreatorModel.SelectedPlanets.Length == _lastNumerOfPlanetsSelected && _lastMethodSelected == _planetCreatorModel.MethodSelected)
+            var newLength = _planetCreatorModel.SelectedPlanets?.Length ?? 0;
+            if (newLength == _lastNumerOfPlanetsSelected && _lastMethodSelected == _planetCreatorModel.MethodSelected)
                 return;
-            _lastNumerOfPlanetsSelected = _planetCreatorModel.SelectedPlanets.Length;
+            _lastNumerOfPlanetsSelected = newLength;
             _lastMethodSelected = _planetCreatorModel.MethodSelected;
-            if (!string.IsNullOrEmpty(_lastMethodSelected))
+            if (string.IsNullOrEmpty(_lastMethodSelected))
                 return;
             foreach (var child in base.GetChildren())
                 base.RemoveChild(child as Node);

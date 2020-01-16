@@ -6,7 +6,7 @@ namespace NBody.Gui.Extensions
 {
     public static class EnumerableExtensions
     {
-        public static IEnumerable<T> Log<T>(this IEnumerable<T> src)
+        public static IEnumerable<T> Log<T>(this IEnumerable<T> src, bool block = false)
         {
             Console.WriteLine($"#{src.Count()} ");
             foreach (var obj in src)
@@ -14,6 +14,8 @@ namespace NBody.Gui.Extensions
                 Console.WriteLine(obj.ToString());
                 yield return obj;
             }
+            if (block)
+                Console.ReadKey();
         }
     }
 }

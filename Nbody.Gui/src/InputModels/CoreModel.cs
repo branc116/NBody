@@ -1,4 +1,4 @@
-﻿namespace Nbody.Gui.src.InputModels
+﻿namespace NBody.Gui.src.InputModels
 {
     public class CoreModel
     {

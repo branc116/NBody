@@ -1,15 +1,16 @@
 ﻿using Godot;
-using Nbody.Gui.src.Attributes;
+using NBody.Gui.src.Attributes;
 using NBody.Gui;
 using NBody.Gui.InputModels;
 
-namespace Nbody.Gui.src.Controllers
+namespace NBody.Gui.src.Controllers
 {
     [ButtonCommand(Name = "")]
     public class DebugController
     {
         private readonly SimulationModel _simulationModel = SourceOfTruth.SimulationModel;
         private readonly VisualizationModel _visualizationModel = SourceOfTruth.VisualizationModel;
+        private readonly PlanetCreatorModel _planetCreatorModel = SourceOfTruth.PlanetCreatorModel;
         public void Restart(Node node)
         {
             _simulationModel.RestartRequested = true;
@@ -41,6 +42,10 @@ namespace Nbody.Gui.src.Controllers
         public void CloseDebug(Node node)
         {
             _visualizationModel.IsDebugShown = false;
+        }
+        public void DoIt(Node node)
+        {
+            _planetCreatorModel.DoIt();
         }
     }
 }

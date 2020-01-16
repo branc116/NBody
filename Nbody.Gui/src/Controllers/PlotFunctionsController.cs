@@ -1,13 +1,14 @@
 ﻿using Godot;
-using Nbody.Gui.Attributes;
-using Nbody.Gui.InputModels;
+using NBody.Gui.Attributes;
+using NBody.Gui.InputModels;
 using NBody.Core;
 using NBody.Gui;
 using NBody.Gui.Extensions;
 using System;
 using System.Linq;
+using NBody.Gui.Core;
 
-namespace Nbody.Gui.Controllers
+namespace NBody.Gui.Controllers
 {
     [PlotFunction]
     public class PlotFunctionsController
@@ -37,7 +38,6 @@ namespace Nbody.Gui.Controllers
             }).ToArray();
 
             return points;
-
         }
         public Vector2[] PhaseSpace(Planet planet, Planet planet2)
         {
@@ -48,8 +48,8 @@ namespace Nbody.Gui.Controllers
             for (int i = 0; i < to; i++)
             {
                 var diff = history1[i] - history2[i];
-                var phi = diff.AngleTo(Vector3.Right);
-                var theta = diff.AngleTo(Vector3.Up);
+                var phi = Mathf.Pow(diff.AngleTo(Vector3.Right), 2);
+                var theta = Mathf.Pow(diff.AngleTo(Vector3.Up), 2);
                 retArr[i] = new Vector2(phi, theta);
             }
             return retArr;

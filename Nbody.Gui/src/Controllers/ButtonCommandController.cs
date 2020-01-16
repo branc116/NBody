@@ -1,11 +1,11 @@
 ﻿using Godot;
-using Nbody.Gui.src.Attributes;
+using NBody.Gui.src.Attributes;
 using NBody.Gui.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Nbody.Gui.src.Controllers
+namespace NBody.Gui.src.Controllers
 {
     public class ButtonCommandController
     {

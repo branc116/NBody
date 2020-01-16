@@ -1,18 +1,19 @@
 ﻿using System;
+
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
 using real_t = System.Single;
 #endif
 
-namespace Nbody.Gui.Core
+namespace NBody.Gui.Core
 {
     public static class MathReal
     {
         // Define constants with Decimal precision and cast down to double or float.
         public const real_t E = (real_t)2.7182818284590452353602874714M; // 2.7182817f and 2.718281828459045
         public const real_t Sqrt2 = (real_t)1.4142135623730950488016887242M; // 1.4142136f and 1.414213562373095
-
+        public const real_t Sqrt3 = (real_t)1.7320508075688772935274463415059M;
 #if REAL_T_IS_DOUBLE
         public const real_t Epsilon = 1e-14; // Epsilon size should depend on the precision used.
 #else

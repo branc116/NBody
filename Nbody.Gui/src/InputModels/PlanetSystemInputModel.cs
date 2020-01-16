@@ -1,4 +1,4 @@
-﻿using Nbody.Gui.Core;
+﻿using NBody.Gui.Core;
 using NBody.Core;
 using System;
 using System.Linq;

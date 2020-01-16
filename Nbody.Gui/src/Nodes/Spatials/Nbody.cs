@@ -18,14 +18,14 @@ namespace NBody.Gui.Nodes.Spatials
             var inputModel = PlanetSystemInputModel
                 .LoadFromFile(_simulationModel.InputFile);
             Gui.SourceOfTruth.System = inputModel
-                .ToPlanetSystem();
+                ?.ToPlanetSystem() ?? new PlanetSystem();
         }
         public override void _UnhandledKeyInput(InputEventKey @event)
         {
             if (@event.IsPressed())
                 return;
             var str = @event.AsText();
-            if (str == "R")
+            if (@event.Control && str == "R")
             {
                 _Ready();
             }

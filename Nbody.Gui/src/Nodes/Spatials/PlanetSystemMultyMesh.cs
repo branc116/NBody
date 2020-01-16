@@ -1,18 +1,10 @@
 using Godot;
+using NBody.Gui.Core;
 using NBody.Gui.Extensions;
 namespace NBody.Gui
 {
     public class PlanetSystemMultyMesh : MultiMeshInstance
     {
-        //private MeshInstance _planetMesh;
-
-        public override void _Ready()
-        {
-
-            //_planetMesh = _planetMesh is null ? this.GetNode<MeshInstance>(new NodePath("PlanetMesh")) : _planetMesh;
-            //Multimesh.Mesh = _planetMesh.Mesh;
-            //Multimesh.InstanceCount;
-        }
 
         public override void _Process(float delta)
         {
@@ -20,7 +12,9 @@ namespace NBody.Gui
             Multimesh.InstanceCount = system.Planets.Count;
             for (int i = 0; i < system.Planets.Count; i++)
             {
-                Multimesh.SetInstanceTransform(i, new Transform(Basis.Identity, system.Planets[i].Position.ToV3()));
+                var planet = system.Planets[i];
+                var scale = MathReal.Max(planet.Radius, 0.1f);
+                Multimesh.SetInstanceTransform(i, new Transform(Basis.Identity, planet.Position.ToV3()).Scale2(new Vector3((float)scale, (float)scale, (float)scale)));
             }
         }
     }

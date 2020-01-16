@@ -62,8 +62,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Attributes\ButtonCommandAttribute.cs" />
+    <Compile Include="src\Attributes\PlanetCreatorAttribute.cs" />
     <Compile Include="src\Attributes\PlotFunctionAttribute.cs" />
     <Compile Include="src\Attributes\PropEditAttribute.cs" />
+    <Compile Include="src\Controllers\BodyCreatorController.cs" />
     <Compile Include="src\Controllers\ButtonCommandController.cs" />
     <Compile Include="src\Controllers\DebugController.cs" />
     <Compile Include="src\Controllers\PlanetFabController.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="src\Extensions\FunctionExtensions.cs" />
     <Compile Include="src\Extensions\VectorExtensions.cs" />
     <Compile Include="src\InputModels\CoreModel.cs" />
+    <Compile Include="src\InputModels\PlanetCreatorInputModel.cs" />
     <Compile Include="src\InputModels\PlanetSystemInputModel.cs" />
     <Compile Include="src\InputModels\PlotsModel.cs" />
     <Compile Include="src\InputModels\SimulationModel.cs" />
@@ -101,6 +104,7 @@
     <Compile Include="src\Nodes\Controls\PlanetSystemSelected.cs" />
     <Compile Include="src\Nodes\Controls\PropsEdit.cs" />
     <Compile Include="src\Nodes\Controls\ScrollPlanetDebugList.cs" />
+    <Compile Include="src\Nodes\Controls\TabController_Custom.cs" />
     <Compile Include="src\Nodes\Spatials\Nbody.cs" />
     <Compile Include="src\Nodes\Spatials\PlanetArrow.cs" />
     <Compile Include="src\Nodes\Spatials\PlanetModel.cs" />

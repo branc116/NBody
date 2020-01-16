@@ -19,7 +19,9 @@ namespace NBody.Gui.Nodes.Controls
         }
         public override void _Process(float delta)
         {
-            var numOfPlanetsSelected = _planetCreatorModel.SelectedPlanets.Length;
+            var numOfPlanetsSelected = _planetCreatorModel.SelectedPlanets?.Length ?? 0;
+            if (this.IsAnythingSelected())
+                _planetCreatorModel.MethodSelected = this.GetItemText(this.GetSelectedItems().First());
             if (_lastNumerOfPlanetsSelected != numOfPlanetsSelected)
             {
                 _lastNumerOfPlanetsSelected = numOfPlanetsSelected;
