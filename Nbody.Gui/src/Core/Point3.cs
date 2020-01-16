@@ -924,7 +924,7 @@ namespace NBody.Gui.Core
         }
         public static implicit operator Point3Float(Point3 point)
         {
-            return new Point3Float((float)point.x, (float)point.x, (float)point.x);
+            return new Point3Float((float)point.x, (float)point.y, (float)point.z);
         }
 
         public override bool Equals(object obj)

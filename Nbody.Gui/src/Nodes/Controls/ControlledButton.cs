@@ -5,6 +5,7 @@ namespace NBody.Gui.src.Nodes.Controls
 {
     public class ControlledButton : Button
     {
+        public int mofo;
         private ButtonCommandController _buttonCommandController;
         public override void _Ready()
         {

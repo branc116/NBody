@@ -119,5 +119,45 @@ namespace NBody.Gui.Controllers
                 .ToArray();
             return history1;
         }
+        public Vector2[] ProjectToOrbitPlane(Planet p1, Planet p2)
+        {
+            (Planet sun, Planet earth) = p1.Mass > p2.Mass ? (p1, p2) : (p2, p1);
+            var normal = (earth.Position - sun.Position).Cross(earth.Velocity);
+            var d = -normal.Dot(sun.Position);
+            var ls = normal.LengthSquared();
+
+            var oR = (sun.Position + Point3.Right);
+            var xOs = (oR - (((oR.Dot(normal) + d) / ls) * normal)).Normalized();
+            var yOs = xOs.Cross(normal).Normalized();
+            var points = earth.PositionHistory
+                .Select(i => i - (((i.Dot(normal) + d)/ls) * normal))
+                .Select(i => new Vector2((float)i.Dot(xOs), (float)i.Dot(yOs)))
+                .ToArray();
+            return points;
+        }
+        public Vector2[] ProjectToOrbitPlaneRelative(Planet p1, Planet p2)
+        {
+            (Planet sun, Planet earth) = p1.Mass > p2.Mass ? (p1, p2) : (p2, p1);
+            var normal = (earth.Position - sun.Position).Cross(earth.Velocity);
+            var d = -normal.Dot(sun.Position);
+            var ls = normal.LengthSquared();
+
+            var oR = (sun.Position + Point3.Right);
+            var xOs = (oR - (((oR.Dot(normal) + d) / ls) * normal)).Normalized();
+            var yOs = xOs.Cross(normal).Normalized();
+
+            var sPs = sun.PositionHistory.ToList();
+            var ePs = earth.PositionHistory.ToList();
+            var n = Math.Min(sPs.Count, ePs.Count);
+            var arr = new Vector2[n];
+            for (int i = 0;i<n;i++)
+            {
+                var relative = ePs[ePs.Count - 1 - i] - sPs[sPs.Count - 1 - i];
+                var onPlain = relative - (((relative.Dot(normal) + d) / ls) * normal);
+                var point = new Vector2((float)onPlain.Dot(xOs), (float)onPlain.Dot(yOs));
+                arr[n - i - 1] = point;
+            }
+            return arr;
+        }
     }
 }

@@ -12,6 +12,9 @@ namespace NBody.Gui.Nodes.Spatials
         private Spatial _globalArrow;
         public override void _Ready()
         {
+#if REAL_T_IS_DOUBLE
+            System.Console.WriteLine("Using doubles");
+#endif
             _arrowSpatial = _arrowSpatial is null ? this.GetNode<Spatial>(new NodePath("ArrowSpatial")) : _arrowSpatial;
             _globalArrow = _globalArrow is null ? _arrowSpatial.Duplicate() as Spatial : _globalArrow;
             AddChild(_globalArrow);

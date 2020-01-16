@@ -74,7 +74,7 @@ namespace NBody.Gui.Nodes.Controls
                 if (nonValidParams.Any())
                     Console.WriteLine(nonValidParams.Select(k => k.ParameterType.Name).Aggregate((ii, jj) => $"{ii}, {jj}"));
                 return !nonValidParams.Any();
-            }).Log(). Select(j => new MethodModel(j, instance)))
+            }).Select(j => new MethodModel(j, instance)))
                     yield return meth;
         }
     }

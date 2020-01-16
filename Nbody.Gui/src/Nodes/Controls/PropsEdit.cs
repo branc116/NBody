@@ -23,7 +23,7 @@ namespace NBody.Gui
         private IEnumerable<Control> GetProps(Type staticClass, Func<object> obj, string name = default)
         {
             return staticClass.GetFields()
-                .Where(i => i.CustomAttributes.Select(j => j.AttributeType).Log().Any(j => j == typeof(PropEditAttribute)))
+                .Where(i => i.CustomAttributes.Select(j => j.AttributeType).Any(j => j == typeof(PropEditAttribute)))
                 .Where(i =>
                 {
                     if (name == null)

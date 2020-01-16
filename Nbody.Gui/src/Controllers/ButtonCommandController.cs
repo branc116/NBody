@@ -37,7 +37,6 @@ namespace NBody.Gui.src.Controllers
                         });
 
                 })
-                .Log()
                 .ToDictionary(i => i.Item1, i => i.Item2);
         }
         public void Do(string name, Node node)
