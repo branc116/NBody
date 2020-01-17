@@ -8,7 +8,7 @@
 
 
 ### How to run
-* Clone the project: `git clone https://github/branc116/NBody`
+* Clone the project: `git clone https://github.com/branc116/NBody`
 * Download [Godot 3.2-beta5-monobuild](https://downloads.tuxfamily.org/godotengine/3.2/beta5/mono/)
 * Open Godot and open the project using Godot
 
