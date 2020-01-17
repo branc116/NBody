@@ -23,6 +23,8 @@ namespace NBody.Gui.InputModels
         public real_t GravitationalConstant;
         [PropEdit]
         public bool UseOpenCl;
+        [PropEdit]
+        public int DoPidEveryStep = 10;
         public string InputFile = "PlanetSystem.json";
         public bool RestartRequested = false;
         public bool ShowOpenPlanetSystemDialog = false;

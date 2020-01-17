@@ -15,6 +15,7 @@ namespace NBody.Core
         private int _mod;
         public int Position => _position;
         public int Length => _lenght;
+        public int Count => Math.Min(_lenght, _max);
         public CircularArray(int N, int rememberEvery = 1)
         {
             _coll = new T[N];
@@ -40,20 +41,43 @@ namespace NBody.Core
             }
             _mod++;
         }
+        public void RemoveLast()
+        {
+            if (_lenght == 0)
+                return;
+            _lenght = Math.Min(_lenght, _max) - 1;
+            _mod = 0;
+            _position = _position == 0 ? _max - 1 : _position - 1;
+            _positionRead = _position == 0 ? _max - 1 : _position - 1;
+        }
         public T Last()
         {
             return _coll[_positionRead];
+        }
+        public T Last(int i)
+        {
+            if (_positionRead - i < 0)
+                return _coll[_positionRead - i + _max];
+            return _coll[_positionRead - i];
+        }
+        public IEnumerable<T> Reverse()
+        {
+            var i = 0;
+            var n = Math.Min(_max, _lenght);
+            for (; i < n; i++)
+                yield return Last(i);
         }
         public void Clear()
         {
             _position = 0;
             _lenght = 0;
+            _mod = 0;
         }
         public IEnumerator<T> GetEnumerator()
         {
             var len = Math.Min(_lenght, _max);
-            var cur = _positionRead - len + 2;
-            while (len-- > _rememberEvery)
+            var cur = _positionRead - len + 1;
+            while (len-- > 0)
             {
                 if (cur < 0) cur += _max;
                 yield return _coll[cur];

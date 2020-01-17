@@ -15,5 +15,6 @@ namespace NBody.Gui
         public readonly static PlotsModel PlotModel = new PlotsModel();
         public readonly static Kernels.NbodyClKernel Kernel = Kernels.NbodyClKernel.GetNbodyClKernel();
         public static readonly PlanetCreatorModel PlanetCreatorModel = new PlanetCreatorModel();
+        public static readonly PlanetInfoModel PlanetInfoModel = new PlanetInfoModel();
     }
 }

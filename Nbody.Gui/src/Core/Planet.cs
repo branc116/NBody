@@ -26,6 +26,7 @@ namespace NBody.Core
         public real_t Mass { get; set; }
         public real_t Radius { get; set; }
         public string Name { get; set; }
+        public virtual string Type => "Basic planet";
         public Point3 Momentum =>
             Velocity * Mass;
         public double KineticEnergy =>
@@ -40,6 +41,10 @@ namespace NBody.Core
             Velocity = mom1 + mom2 / (planet.Mass + Mass);
             Mass += planet.Mass;
         }
+        public Dictionary<int, Func<Planet, real_t, Point3>> LagrangePoint => new Dictionary<int, Func<Planet, real_t, Point3>>
+        {
+            {1, L1 }, {2, L2 }, {3, L3 }, {4, L4 }, {5, L5 }
+        };
         /// <summary>
         /// L1 point for the pair of planets planet.Mass > Mass;
         /// </summary>
@@ -112,7 +117,7 @@ namespace NBody.Core
             var R = diff.Length();
             var T1 = diff.Normalized() * R / 2;
             var T2 = Velocity.Normalized() * MathReal.Sqrt3 / 2 * R;
-            var L4 = T1 + T2;
+            var L4 = largerPlanet.Position + T1 + T2;
             return L4;
         }
         /// <summary>
@@ -128,7 +133,7 @@ namespace NBody.Core
             var R = diff.Length();
             var T1 = diff.Normalized() * R / 2;
             var T2 = Velocity.Normalized() * MathReal.Sqrt3 / 2 * R;
-            var L4 = T1 - T2;
+            var L4 = largerPlanet.Position + T1 - T2;
             return L4;
         }
         public override string ToString()
@@ -140,20 +145,43 @@ namespace NBody.Core
         {
             return MathReal.Sqrt(SourceOfTruth.System.GravitationalConstant * (Mass + mass) / distance);
         }
-        public Point3 GetNullSpeed(Planet smallerPlanet, Point3 position)
+        public Point3 GetNullVelocity(Planet smallerPlanet, Point3 position)
         {
             var vdas = position - Position;
             var vdae = position - smallerPlanet.Position;
             var das = Position.DistanceTo(position);
             var dae = smallerPlanet.Position.DistanceTo(position);
+            var beryCenter = (smallerPlanet.Mass * smallerPlanet.Position + Mass * Position) / (smallerPlanet.Mass + Mass);
+            var distanceToBeryCenter = position.DistanceTo(beryCenter);
             var speedSquared = SourceOfTruth.SimulationModel.GravitationalConstant *
-                    (Mass * vdas.Normalized() / das / das + smallerPlanet.Mass * vdae.Normalized() / dae / dae).Length() * das;
+                    (Mass * vdas.Normalized() / das / das + smallerPlanet.Mass * vdae.Normalized() / dae / dae).Length() * distanceToBeryCenter;
             var rotateFor = position.AngleTo(smallerPlanet.Position);
 
             var rotateAroud = vdae.Normalized().Cross(smallerPlanet.Position - Position).Normalized();
             var velocity = smallerPlanet.Velocity.RotateAround(rotateAroud, rotateFor).Normalized() * MathReal.Sqrt(speedSquared);
             return velocity;
         }
+        public virtual IEnumerable<(string name, string value)> GetPlanetInfo()
+        {
+            yield return ("Name", Name);
+            yield return ("Type", Type);
+            yield return ("Position", Position.ToString("F3"));
+            yield return ("Velocity", Velocity.ToString("F3"));
+            yield return ("Momentum", Momentum.ToString("F3"));
+            yield return ("Internal force", InternalAcceleration(false, 0).ToString("F3"));
+
+            yield return ("Kinetic energy", KineticEnergy.ToString("F3"));
+            yield return ("Speed", Velocity.Length().ToString("F3"));
+            yield return ("Mass", Mass.ToString("F3"));
+            yield return ("Radius", Radius.ToString("F3"));
+            yield return ("Number of history points", _position.Count.ToString());
+
+        }
+        public virtual Point3 InternalAcceleration(bool recalculate, real_t dt)
+        {
+            return Point3.Zero;
+        }
     }
+    
 }
 

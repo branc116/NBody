@@ -68,7 +68,7 @@ namespace NBody.Core
             var positions = Positions;
             var dtps = _simulationModel.DeltaTimePerStep;
             var G = _simulationModel.GravitationalConstant;
-
+            var doPid = NStep % _simulationModel.DoPidEveryStep == 0;
             for (var i1 = 0; i1 < Planets.Count; i1++)
             {
                 var planet = Planets[i1];
@@ -90,6 +90,8 @@ namespace NBody.Core
                     if (norm < dist * dist)
                         mergeNeedeed = true;
                 }
+                if (doPid)
+                    newVelocity += planet.InternalAcceleration(true, dtps * _simulationModel.DoPidEveryStep) * dtps;
                 newPosition += newVelocity * dtps;
                 planet.Position = newPosition;
                 planet.Velocity = newVelocity;

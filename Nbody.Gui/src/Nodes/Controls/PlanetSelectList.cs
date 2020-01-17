@@ -15,6 +15,8 @@ namespace NBody.Gui.Nodes.Controls
         private readonly PlanetFabController _planetFabController = new PlanetFabController();
         private readonly PlotsModel _plotModel = SourceOfTruth.PlotModel;
         private readonly PlanetCreatorModel _planetCreatorModel = SourceOfTruth.PlanetCreatorModel;
+        private readonly PlanetInfoModel _planetInfoModel = SourceOfTruth.PlanetInfoModel;
+
         private int _lastSelected = -1;
         private DateTime _lastUpdated = DateTime.Now.AddDays(-1);
         public override void _Ready()
@@ -38,6 +40,8 @@ namespace NBody.Gui.Nodes.Controls
                 _planetCreatorModel.SelectedPlanets = arr;
             else if (Name == "PlotsPlanetsList")
                 _plotModel.SelectedPlanets = arr;
+            else if (Name == "PlanetInfo" && arr.Length > 0)
+                _planetInfoModel.SelectedPlanet = arr[0];
 
             var lastchange = SourceOfTruth.System.PlanetNamesLastChanged;
             if (_lastUpdated >= lastchange)

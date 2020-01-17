@@ -74,6 +74,7 @@
     <Compile Include="src\Core\Core.cs" />
     <Compile Include="src\Core\MathReal.cs" />
     <Compile Include="src\Core\Planet.cs" />
+    <Compile Include="src\Core\PlanetInLagrangePoint.cs" />
     <Compile Include="src\Core\Point3.cs" />
     <Compile Include="src\Core\SymetricalMatrix.cs" />
     <Compile Include="src\Extensions\EnumerableExtensions.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="src\Extensions\VectorExtensions.cs" />
     <Compile Include="src\InputModels\CoreModel.cs" />
     <Compile Include="src\InputModels\PlanetCreatorInputModel.cs" />
+    <Compile Include="src\InputModels\PlanetInfoModel.cs" />
     <Compile Include="src\InputModels\PlanetSystemInputModel.cs" />
     <Compile Include="src\InputModels\PlotsModel.cs" />
     <Compile Include="src\InputModels\SimulationModel.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="src\Nodes\Controls\LinesDrawer.cs" />
     <Compile Include="src\Nodes\Controls\PlanetCreatorFunctionList.cs" />
     <Compile Include="src\Nodes\Controls\PlanetCreatorParameters.cs" />
+    <Compile Include="src\Nodes\Controls\PlanetInfo_ItemList.cs" />
     <Compile Include="src\Nodes\Controls\PlanetLable.cs" />
     <Compile Include="src\Nodes\Controls\PlanetSelectList.cs" />
     <Compile Include="src\Nodes\Controls\PlanetSystemSelected.cs" />

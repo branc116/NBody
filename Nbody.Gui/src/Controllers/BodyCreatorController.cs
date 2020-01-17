@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NBody.Gui.Extensions;
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
@@ -37,7 +38,7 @@ namespace NBody.Gui.Controllers
                 new Point3(c + rand(), c + rand(), c + rand());
             var planets = Enumerable.Range(0, n).Select(i => new Planet
             {
-                Mass = averageMass + rand()/10,
+                Mass = averageMass + rand() / 10,
                 Name = $"{name}#{i}",
                 Position = randP(averagePosition),
                 Velocity = randP(averageVelocity),
@@ -61,35 +62,47 @@ namespace NBody.Gui.Controllers
             };
             SourceOfTruth.System.AddPlanets(newPlanet);
         }
-        public void PutObjectInLagrangePoint(Planet planet, Planet planet1, int lagrangePoint = 1, real_t offset = 0, real_t mass= 1, real_t radius = 1, string planetName = "{0}, {1} L1")
+        public void PutObjectInLagrangePoint(Planet planet, Planet planet1, int lagrangePoint = 1, Point3 pidCoeficient = default, real_t DV = 10, real_t offset = 0, real_t mass = 1, real_t radius = 1, string planetName = "{0}, {1} L{2}")
         {
-            (Planet larger,Planet smaller) = planet.Mass > planet1.Mass ? (planet, planet1) : (planet1, planet);
-            var location = Point3.Zero;
-            if (lagrangePoint == 1)
-                location = smaller.L1(larger, offset);
-            else if (lagrangePoint == 2)
-                location = smaller.L2(larger, offset);
-            else if (lagrangePoint == 3)
-                location = smaller.L3(larger, offset);
-            else if (lagrangePoint == 4)
-                location = smaller.L4(larger, offset);
-            else if (lagrangePoint == 5)
-                location = smaller.L5(larger, offset);
-            else
-                return;
-            //var velocityDirection = smaller.Velocity.Normalized() *
-            //    larger.GetCircularOrbitSpeed(mass, location.DistanceTo(larger.Position)) + larger.Velocity;
-            var velocityDirection = larger.GetNullSpeed(smaller, location);
-            var newPlanet = new Planet
-            {
-                Velocity = velocityDirection, // Point3.Zero, // smaller.Velocity,
-                Position = location,
-                Mass = mass,
-                Name = planetName.Replace("{0}", larger.Name).Replace("{1}", smaller.Name),
-                Radius = radius
-            };
+            (Planet larger, Planet smaller) = planet.Mass > planet1.Mass ? (planet, planet1) : (planet1, planet);
+            var newPlanet = new PlanetInLagrangePoint(smaller, larger, lagrangePoint, radius, offset, mass, planetName, pidCoeficient, DV);
             SourceOfTruth.System.AddPlanets(newPlanet);
-
+        }
+        public void StarSystem(Point3 centerLocation, Point3 velocity, real_t discSize = 10, real_t starSystemMass = 1000, int bodysInStarSystem = 10, string name = "System")
+        {
+            var random = new Random();
+            var startMass = starSystemMass * (real_t)0.99;
+            var massRemaining = starSystemMass - startMass;
+            var star = new Planet
+            {
+                Mass = startMass,
+                Name = $"{name} start",
+                Position = centerLocation,
+                Radius = 5,
+                Velocity = velocity
+            };
+            SourceOfTruth.System.AddPlanets(star);
+            for (var i = 1; i < bodysInStarSystem; i++)
+            {
+                var distance = discSize * i / bodysInStarSystem;
+                var phaseShift = (real_t)(random.NextDouble() * MathReal.Pi * 2);
+                
+                var planetLocation = Point3.Right.RotateAround(Point3.Up, phaseShift) * distance + centerLocation;
+                var mass = massRemaining / bodysInStarSystem; // * random.NextDouble();
+                var r = (real_t)1;
+                var speed = star.GetCircularOrbitSpeed(mass, distance);
+                var planetVelocity = Point3.Forward.RotateAround(Point3.Up, phaseShift) * speed + velocity;
+                var planet = new Planet
+                {
+                    Mass = mass,
+                    Name = $"{name} Planet#{i}",
+                    Position = planetLocation,
+                    Radius = r,
+                    Velocity = planetVelocity
+                };
+                SourceOfTruth.System.AddPlanets(planet);
+                //massRemaining -= mass;
+            }
         }
         public void Delete(Planet planet) =>
             SourceOfTruth.System.RemovePlanets(planet);
