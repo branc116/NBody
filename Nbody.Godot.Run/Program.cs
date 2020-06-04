@@ -1,12 +1,12 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
-using NBody.Core;
+using Nbody.Core;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using NBody.Gui.Core;
+using Nbody.Gui.Core;
 using System.Collections.Generic;
 
 
@@ -22,7 +22,7 @@ using godot_real_t = System.Double;
 using godot_real_t = System.Single;
 #endif
 
-namespace NBody.Gui.Run
+namespace Nbody.Gui.Run
 {
     class Program
     {

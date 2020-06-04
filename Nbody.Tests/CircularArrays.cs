@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NBody.Core;
+using Nbody.Core;
 
-namespace NBody.Tests
+namespace Nbody.Tests
 {
     [TestClass]
     public class CircularArrays

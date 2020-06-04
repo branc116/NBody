@@ -47,14 +47,20 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tools|AnyCPU'">
+    <OutputPath>bin\Tools\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GodotSharp, Version=1.0.7374.16783, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CircularArrays.cs" />
+    <Compile Include="LagrangeTesting.cs" />
     <Compile Include="NumericSolve.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerializerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MSTest.TestAdapter">

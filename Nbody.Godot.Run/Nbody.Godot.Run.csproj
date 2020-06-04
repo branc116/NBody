@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Configurations>Debug;Release;Debug_Double</Configurations>
+    <Configurations>Debug;Release;Debug_Double;Tools</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Double|AnyCPU'">
