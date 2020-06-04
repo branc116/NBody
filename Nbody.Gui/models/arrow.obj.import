@@ -15,4 +15,5 @@ dest_files=[ "res://.import/arrow.obj-5f60a0a71825885a77417b8daf61724d.mesh", "r
 
 generate_tangents=true
 scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
 optimize_mesh=true

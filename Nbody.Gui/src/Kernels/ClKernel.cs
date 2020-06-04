@@ -1,20 +1,17 @@
 ﻿using ILGPU;
 using ILGPU.Runtime;
 using ILGPU.Runtime.OpenCL;
-using NBody.Gui.Core;
-using NBody.Core;
+using Nbody.Gui.Core;
+using Nbody.Core;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ILGPU.Util;
+
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
 using real_t = System.Single;
 #endif
-namespace NBody.Gui.Kernels
+namespace Nbody.Gui.Kernels
 {
     public readonly struct NbodyKernelModel
     {
@@ -49,11 +46,12 @@ namespace NBody.Gui.Kernels
     {
         private readonly Context _context;
         private readonly Accelerator _accelerator;
-        private readonly Action<Index, ArrayView<PlanetKernelModel>, NbodyKernelModel, ArrayView<PlanetKernelModel>> _kernel;
+        private readonly Action<KernelConfig, Index1, ArrayView<PlanetKernelModel>, NbodyKernelModel, ArrayView<PlanetKernelModel>> _kernel;
+        private readonly KernelConfig _config;
 
         public bool Ok { get; }
 
-        public static void NbodyKernelPnt(Index i, ArrayView<PlanetKernelModel> planets, NbodyKernelModel model, ArrayView<PlanetKernelModel> outPlanet)
+        public static void NbodyKernelPnt( Index1 i, ArrayView<PlanetKernelModel> planets, NbodyKernelModel model, ArrayView<PlanetKernelModel> outPlanet)
         {
 
             var planet = planets[i];
@@ -84,32 +82,30 @@ namespace NBody.Gui.Kernels
         {
             var model = new NbodyKernelModel((float)planetSystem.GravitationalConstant, (float)planetSystem.Dt, planetSystem.Planets.Count);
             var planets = planetSystem.Planets.Select(i => new PlanetKernelModel(i.Position, i.Velocity, (float)i.Mass, (float)i.Radius, -1)).ToArray();
-            using (var dataSource = _accelerator.Allocate<PlanetKernelModel>(model.N))
+            using var dataSource = _accelerator.Allocate<PlanetKernelModel>(model.N);
             //using (var dataSource2 = _accelerator.Allocate<NbodyKernelModel>(1))
-            using (var dataTarget = _accelerator.Allocate<PlanetKernelModel>(model.N))
+            using var dataTarget = _accelerator.Allocate<PlanetKernelModel>(model.N);
+            dataSource.CopyFrom(planets, 0, 0, model.N);
+            dataTarget.MemSetToZero();
+            do
             {
-                dataSource.CopyFrom(planets, 0, 0, model.N);
-                dataTarget.MemSetToZero();
-                do
+                _kernel(_config, model.N, dataSource.ToArrayView(), model, dataTarget.ToArrayView());
+
+                _accelerator.Synchronize();
+                if (n > 1)
                 {
-                    _kernel(model.N, dataSource.ToArrayView(), model, dataTarget.ToArrayView());
-                    
-                    _accelerator.Synchronize();
-                    if (n > 1)
-                    {
-                        dataSource.CopyFrom(dataTarget, 0, 0, model.N);
-                        dataTarget.MemSetToZero();
-                    }
-                } while (--n > 0);
-                var outPlanets = dataTarget.GetAsArray();
-                for (int i = 0; i < planetSystem.Planets.Count; i++)
-                {
-                    var planet = planetSystem.Planets[i];
-                    planet.Position = outPlanets[i].Position;
-                    planet.Velocity = outPlanets[i].Velocity;
+                    dataSource.CopyFrom(dataTarget, 0, 0, model.N);
+                    dataTarget.MemSetToZero();
                 }
-                return;
+            } while (--n > 0);
+            var outPlanets = dataTarget.GetAsArray();
+            for (int i = 0; i < planetSystem.Planets.Count; i++)
+            {
+                var planet = planetSystem.Planets[i];
+                planet.Position = outPlanets[i].Position;
+                planet.Velocity = outPlanets[i].Velocity;
             }
+            return;
         }
         public void Step(PlanetSystem planetSystem, int n = 1)
         {
@@ -128,8 +124,10 @@ namespace NBody.Gui.Kernels
                 var context = new Context();
                 _context = context;
                 _accelerator = CLAccelerator.Create(_context, CLAccelerator.CLAccelerators[0]);
-                _kernel = _accelerator.LoadStreamKernel<Index, ArrayView<PlanetKernelModel>, NbodyKernelModel, ArrayView<PlanetKernelModel>>(NbodyKernelPnt);
+                _kernel = _accelerator.LoadStreamKernel<Index1, ArrayView<PlanetKernelModel>, NbodyKernelModel, ArrayView<PlanetKernelModel>>(NbodyKernelPnt);
+                _config = new KernelConfig();
                 Ok = true;
+                
             }catch (Exception ex)
             {
                 Console.WriteLine(ex);

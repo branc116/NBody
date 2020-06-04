@@ -1,6 +1,6 @@
-﻿using NBody.Core;
+﻿using Nbody.Core;
 
-namespace NBody.Gui
+namespace Nbody.Gui
 {
     public interface IPlanetFab
     {

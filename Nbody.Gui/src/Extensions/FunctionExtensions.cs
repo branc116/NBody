@@ -1,11 +1,11 @@
-﻿using NBody.Gui.Core;
+﻿using Nbody.Gui.Core;
 using System;
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
 using real_t = System.Single;
 #endif
-namespace NBody.Gui.Extensions
+namespace Nbody.Gui.Extensions
 {
     public static class FunctionExtensions
     {

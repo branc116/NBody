@@ -1,9 +1,9 @@
 ﻿using Godot;
-using NBody.Gui.InputModels;
-using NBody.Gui;
+using Nbody.Gui.InputModels;
+using Nbody.Gui;
 using System.Linq;
 
-namespace NBody.Gui.src.Nodes.Controls
+namespace Nbody.Gui.src.Nodes.Controls
 {
     public class FunctionList : ItemList
     {
@@ -20,7 +20,7 @@ namespace NBody.Gui.src.Nodes.Controls
             if (!_plotsModel.PlotVisible || _plotsModel.SelectedPlanets is null)
                 return;
             UpdateSelected();
-            var selectedPlanetsCount = _plotsModel.SelectedPlanets.Length;
+            var selectedPlanetsCount = _plotsModel.SelectedPlanets.Get.Length;
             if (selectedPlanetsCount == _lastSelectedNumerOfPlanets)
                 return;
             this.Clear();

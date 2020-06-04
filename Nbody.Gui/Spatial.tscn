@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://src/Nodes/Controls/ControlledButton.cs" type="Script" id=1]
 [ext_resource path="res://camera_controll.gd" type="Script" id=2]
@@ -18,6 +18,7 @@
 [ext_resource path="res://src/Nodes/Controls/PlanetSelectList.cs" type="Script" id=16]
 [ext_resource path="res://src/Nodes/Controls/PlanetCreatorParameters.cs" type="Script" id=17]
 [ext_resource path="res://src/Nodes/Controls/PlanetInfo_ItemList.cs" type="Script" id=18]
+[ext_resource path="res://src/Nodes/Spatials/Line3D.cs" type="Script" id=19]
 
 [sub_resource type="ButtonGroup" id=1]
 
@@ -80,7 +81,7 @@ shader_param/offset = Vector2( 100, 100 )
 shader_param/center = Vector2( 0, 0 )
 shader_param/resolution = Vector2( 771, 528 )
 shader_param/width = 2.0
-shader_param/modNum = 1.0
+shader_param/modNum = 0.1
 
 [sub_resource type="Shader" id=5]
 code = "shader_type canvas_item;
@@ -97,7 +98,7 @@ void vertex() {
 //    VERTEX = center + ((xxx - vec2(-offset.x, offset.y) - VERTEX.xy) * mat2(vec2(z.x, 0), vec2(0, z.y)) );   
     VERTEX += vec2(center.x, center.y);
     VERTEX *= scale;
-    VERTEX = vec2(xxx.x, xxx.y + offset.y) - VERTEX;
+    VERTEX = vec2(xxx.x, xxx.y + offset.y*1.17) - VERTEX;
     POINT_SIZE = 1f;
 }"
 
@@ -120,11 +121,23 @@ mesh = SubResource( 7 )
 transform_format = 1
 mesh = ExtResource( 4 )
 
+[sub_resource type="SpatialMaterial" id=10]
+albedo_color = Color( 0, 0, 1, 0.596078 )
+
+[sub_resource type="SphereMesh" id=11]
+material = SubResource( 10 )
+radial_segments = 8
+rings = 4
+
+[sub_resource type="MultiMesh" id=12]
+transform_format = 1
+mesh = SubResource( 11 )
+
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 7 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 0.736745, -0.417058, 0.532231, 0, 0.787125, 0.616794, -0.676171, -0.45442, 0.57991, 10, 10, 20 )
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0, 250, 0 )
 far = 200000.0
 script = ExtResource( 2 )
 mouse_mode = 0
@@ -160,7 +173,6 @@ transform = Transform( 0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 2, 0 )
 mesh = ExtResource( 4 )
 
 [node name="PlotPanel" type="Panel" parent="."]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = 2.0
@@ -179,7 +191,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PlotsPlanetsList" type="ItemList" parent="PlotPanel/PlanetsContainer"]
+[node name="PlotsPlanetsList" type="ItemList" parent="PlotPanel/PlanetsContainer" groups=[
+"PlanetLists",
+]]
 margin_right = 244.0
 margin_bottom = 174.0
 size_flags_horizontal = 3
@@ -189,6 +203,7 @@ script = ExtResource( 16 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+PlanetListName = "PlotsPlanetList"
 
 [node name="FunctionsContainer" type="VBoxContainer" parent="PlotPanel"]
 anchor_top = 0.296
@@ -230,6 +245,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 2
 script = ExtResource( 8 )
+PropGroup = "PlotProps"
 
 [node name="ControllButtons" type="Panel" parent="PlotPanel"]
 anchor_left = 0.24
@@ -370,7 +386,6 @@ __meta__ = {
 }
 
 [node name="PlanetCreate" type="HBoxContainer" parent="TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -595,8 +610,10 @@ script = ExtResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+PropGroup = "DebugProp"
 
 [node name="PlanetInfo" type="PanelContainer" parent="TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -621,7 +638,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PlanetInfoList" type="ItemList" parent="TabContainer/PlanetInfo/VBoxContainer"]
+[node name="PlanetInfoList" type="ItemList" parent="TabContainer/PlanetInfo/VBoxContainer" groups=[
+"PlanetLists",
+]]
 margin_top = 299.0
 margin_right = 389.0
 margin_bottom = 549.0
@@ -644,8 +663,8 @@ resizable = true
 mode = 0
 access = 2
 show_hidden_files = true
-current_dir = "C:/Users/Branimir/source/repos/nbody/Nbody.Gui"
-current_path = "C:/Users/Branimir/source/repos/nbody/Nbody.Gui/"
+current_dir = "C:/_Projects/priv/NBody/Nbody.Gui"
+current_path = "C:/_Projects/priv/NBody/Nbody.Gui/"
 script = ExtResource( 13 )
 
 [node name="PlanetSystem" type="MultiMeshInstance" parent="."]
@@ -655,3 +674,11 @@ script = ExtResource( 11 )
 [node name="PlanetSystemArrows" type="MultiMeshInstance" parent="."]
 multimesh = SubResource( 9 )
 script = ExtResource( 12 )
+
+[node name="OmniLight" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.805095 )
+
+[node name="PlanetHistory" type="MultiMeshInstance" parent="."]
+multimesh = SubResource( 12 )
+script = ExtResource( 19 )
+[connection signal="multi_selected" from="PlotPanel/PlanetsContainer/PlotsPlanetsList" to="PlotPanel/PlanetsContainer/PlotsPlanetsList" method="_on_PlotsPlanetsList_multi_selected"]

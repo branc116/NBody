@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NBody.Gui.Attributes
+namespace Nbody.Gui.Attributes
 {
     public class PlanetCreatorAttribute : Attribute
     {

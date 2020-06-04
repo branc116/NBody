@@ -1,7 +1,7 @@
 using Godot;
-using NBody.Gui.Core;
-using NBody.Gui.Extensions;
-namespace NBody.Gui
+using Nbody.Gui.Core;
+using Nbody.Gui.Extensions;
+namespace Nbody.Gui
 {
     public class PlanetSystemMultyMesh : MultiMeshInstance
     {

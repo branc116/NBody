@@ -1,18 +1,11 @@
 using Godot;
-using NBody.Gui.Controllers;
-using NBody.Gui.InputModels;
+using Nbody.Gui.Helpers;
+using Nbody.Gui.Controllers;
+using Nbody.Gui.InputModels;
 using System.Linq;
 
-namespace NBody.Gui
+namespace Nbody.Gui.Nodes.Controls
 {
-    public enum DisplayPlanetProperty
-    {
-        Name = 0,
-        Position = 1,
-        Velocity = 2,
-        KineticEnergy = 3,
-        Momentum = 4
-    }
     public class DebugGrid : GridContainer
     {
         private readonly PlanetFabController _fabController = new PlanetFabController();
@@ -29,7 +22,7 @@ namespace NBody.Gui
         {
             if (!_visualizationModel.IsDebugShown)
                 return;
-            var children = this.GetChildren();
+            var children = GetChildren();
             var system = SourceOfTruth.System;
             _fabController.DeleteOld(system, this);
             _fabController.UpdateExisiting(system, this);

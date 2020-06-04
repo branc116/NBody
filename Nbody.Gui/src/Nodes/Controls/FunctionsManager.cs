@@ -1,13 +1,13 @@
 ﻿using Godot;
-using NBody.Gui.Attributes;
-using NBody.Gui.InputModels;
-using NBody.Core;
-using NBody.Gui;
+using Nbody.Gui.Attributes;
+using Nbody.Gui.InputModels;
+using Nbody.Core;
+using Nbody.Gui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NBody.Gui.src.Nodes.Controls
+namespace Nbody.Gui.src.Nodes.Controls
 {
     public class FunctionsManager
     {
@@ -35,7 +35,7 @@ namespace NBody.Gui.src.Nodes.Controls
                     return j.Select(i =>
                     {
                         var instance = i.DeclaringType.GetConstructor(new Type[] { }).Invoke(new object[] { });
-                        var tuple = (i.Name, (Func<Planet[], Vector2[]>)((planets) =>
+                        var tuple = (Name: i.DeclaringType.Name + '.' + i.Name, (Func<Planet[], Vector2[]>)((planets) =>
                         {
                             return (Vector2[])i.Invoke(instance, planets);
                         }));
@@ -49,9 +49,9 @@ namespace NBody.Gui.src.Nodes.Controls
             var selectedFunc = _plotsModel.SelectedFunc;
             if (selectdPlanets is null || selectedFunc is null)
                 return null;
-            if (_dict.ContainsKey(selectdPlanets.Length) && _dict[selectdPlanets.Length].ContainsKey(_plotsModel.SelectedFunc))
+            if (_dict.ContainsKey(selectdPlanets.Get.Length) && _dict[selectdPlanets.Get.Length].ContainsKey(_plotsModel.SelectedFunc))
             {
-                return _dict[selectdPlanets.Length][selectedFunc](selectdPlanets);
+                return _dict[selectdPlanets.Get.Length][selectedFunc](selectdPlanets);
             }
             if (_dict.ContainsKey(-1) && _dict[-1].ContainsKey(_plotsModel.SelectedFunc))
             {
@@ -65,7 +65,7 @@ namespace NBody.Gui.src.Nodes.Controls
         }
         public string[] GetFunctions()
         {
-            var selectedCount = _plotsModel.SelectedPlanets.Length;
+            var selectedCount = _plotsModel.SelectedPlanets.Get.Length;
             var functions = GetFunctionsWithNParams(selectedCount)
                 .Union(GetFunctionsWithNParams(-1))
                 .ToArray();

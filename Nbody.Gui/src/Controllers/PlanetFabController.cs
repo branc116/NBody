@@ -1,10 +1,11 @@
 ﻿using Godot;
-using NBody.Core;
+using Nbody.Core;
+using Nbody.Gui.Nodes.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NBody.Gui.Controllers
+namespace Nbody.Gui.Controllers
 {
     public class PlanetFabController
     {

@@ -1,15 +1,26 @@
 using Godot;
-using NBody.Core;
-using NBody.Gui.Extensions;
-using NBody.Gui.InputModels;
+using Nbody.Core;
+using Nbody.Gui.Extensions;
+using Nbody.Gui.InputModels;
 
-namespace NBody.Gui.Nodes.Spatials
+namespace Nbody.Gui.Nodes.Spatials
 {
     public class Nbody : Spatial
     {
         private readonly SimulationModel _simulationModel = SourceOfTruth.SimulationModel;
         private Spatial _arrowSpatial;
         private Spatial _globalArrow;
+        public Nbody()
+        {
+            _simulationModel.RestartRequested.RegisterAftersetting(val =>
+            {
+                if (val)
+                {
+                    _Ready();
+                    _simulationModel.RestartRequested.Set(false);
+                }
+            });
+        }
         public override void _Ready()
         {
 #if REAL_T_IS_DOUBLE
@@ -22,6 +33,7 @@ namespace NBody.Gui.Nodes.Spatials
                 .LoadFromFile(_simulationModel.InputFile);
             Gui.SourceOfTruth.System = inputModel
                 ?.ToPlanetSystem() ?? new PlanetSystem();
+            
         }
         public override void _UnhandledKeyInput(InputEventKey @event)
         {
@@ -30,18 +42,13 @@ namespace NBody.Gui.Nodes.Spatials
             var str = @event.AsText();
             if (@event.Control && str == "R")
             {
-                _Ready();
+                _simulationModel.RestartRequested.Set(true);
             }
         }
         public override void _Process(float delta)
         {
             int times = _simulationModel.StepsPerFrame;
             var system = SourceOfTruth.System;
-            if (_simulationModel.RestartRequested)
-            {
-                _Ready();
-                _simulationModel.RestartRequested = false;
-            }
             if (!_simulationModel.Paused)
             {
                 if (_simulationModel.UseOpenCl)

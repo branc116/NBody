@@ -1,8 +1,9 @@
 ﻿using Godot;
 using System;
 using System.Reflection;
+using System.Threading;
 
-namespace NBody.Gui
+namespace Nbody.Gui.Nodes.Controls
 {
     public class DynamicToggleButton : CheckBox
     {
@@ -46,7 +47,7 @@ namespace NBody.Gui
                 }
                 try
                 {
-                    _fieldInfo.SetValue(instance, base.Pressed);
+                    _fieldInfo.SetValue(instance, Pressed);
                 }
                 catch (Exception ex)
                 {

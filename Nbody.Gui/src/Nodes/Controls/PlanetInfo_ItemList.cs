@@ -1,9 +1,9 @@
 using Godot;
-using NBody.Gui.InputModels;
+using Nbody.Gui.InputModels;
 using System;
 using System.Linq;
 
-namespace NBody.Gui.Nodes.Controls
+namespace Nbody.Gui.Nodes.Controls
 {
     public class PlanetInfo_ItemList : ItemList
     {

@@ -1,8 +1,8 @@
 ﻿using Godot;
-using NBody.Core;
-using NBody.Gui.Extensions;
+using Nbody.Core;
+using Nbody.Gui.Extensions;
 
-namespace NBody.Gui.Nodes.Spatials
+namespace Nbody.Gui.Nodes.Spatials
 {
     public class PlanetArrow : Spatial, IPlanetFab
     {

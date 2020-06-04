@@ -1,9 +1,9 @@
 ﻿using Godot;
-using NBody.Gui.src.Attributes;
-using NBody.Gui;
-using NBody.Gui.InputModels;
+using Nbody.Gui.src.Attributes;
+using Nbody.Gui;
+using Nbody.Gui.InputModels;
 
-namespace NBody.Gui.src.Controllers
+namespace Nbody.Gui.src.Controllers
 {
     [ButtonCommand(Name = "")]
     public class DebugController
@@ -13,7 +13,7 @@ namespace NBody.Gui.src.Controllers
         private readonly PlanetCreatorModel _planetCreatorModel = SourceOfTruth.PlanetCreatorModel;
         public void Restart(Node node)
         {
-            _simulationModel.RestartRequested = true;
+            _simulationModel.RestartRequested.Set(true);
         }
         public void Pause(Node node)
         {
@@ -34,10 +34,9 @@ namespace NBody.Gui.src.Controllers
             SourceOfTruth.System.Step(_simulationModel.StepsPerFrame);
         }
         [ButtonCommand(Name = "Open")]
-        
         public void OpenFileDialog(Node node)
         {
-            _simulationModel.ShowOpenPlanetSystemDialog = true;
+            _simulationModel.ShowOpenPlanetSystemDialog.Set(true);
         }
         public void CloseDebug(Node node)
         {

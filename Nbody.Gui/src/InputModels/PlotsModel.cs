@@ -1,6 +1,8 @@
 ﻿using Godot;
-using NBody.Core;
-using NBody.Gui.Attributes;
+using Nbody.Gui.Helpers;
+using Nbody.Core;
+using Nbody.Gui.Attributes;
+using System.Text;
 
 #if GODOT_REAL_T_IS_DOUBLE
 using godot_real_t = System.Double;
@@ -8,36 +10,35 @@ using godot_real_t = System.Double;
 using godot_real_t = System.Single;
 #endif
 
-namespace NBody.Gui.InputModels
+namespace Nbody.Gui.InputModels
 {
     public class PlotsModel
     {
-
         [PropEdit]
-        public float PlotStepsPerDiv = 1000f;
+        public readonly SimpleObservable<float> PlotStepsPerDiv = 1000f;
         [PropEdit]
-        public float DivSize = 1f;
+        public readonly SimpleObservable<float> DivSize = 1f;
         [PropEdit]
-        public godot_real_t PlotCenterX = 0;
+        public readonly SimpleObservable<godot_real_t> PlotCenterX = 0;
         [PropEdit]
-        public godot_real_t PlotCenterY = 0;
+        public readonly SimpleObservable<godot_real_t> PlotCenterY = 0;
         [PropEdit]
-        public float PlotWidth = 3f;
+        public readonly SimpleObservable<float> PlotWidth = 3f;
         [PropEdit(Editable = false)]
-        public Vector2 Min;
+        public readonly SimpleObservable<Vector2> Min = new SimpleObservable<Vector2>(default);
         [PropEdit(Editable = false)]
-        public Vector2 Max;
+        public readonly SimpleObservable<Vector2> Max = new SimpleObservable<Vector2>(default);
         [PropEdit]
-        public bool Follow = false;
+        public readonly SimpleObservable<bool> Follow = false;
         [PropEdit]
-        public bool XLogScale = false;
+        public readonly SimpleObservable<bool> XLogScale = false;
         [PropEdit]
-        public bool YLogScale = false;
-        public Vector2 PlotResoultion;
-        public Planet[] SelectedPlanets;
+        public readonly SimpleObservable<bool> YLogScale = false;
+        public readonly SimpleObservable<Vector2> PlotResoultion = new SimpleObservable<Vector2>(Vector2.Zero);
+        public readonly SimpleObservable<Planet[]> SelectedPlanets = (Planet[])null;
         public string SelectedFunc;
-        public bool PlotVisible = false;
-        public Vector2 PlotOffset;
+        public readonly SimpleObservable<bool> PlotVisible = true;
+        public readonly SimpleObservable<Vector2> PlotOffset = new SimpleObservable<Vector2>(default);
         public Vector2 PlotCenter { get => new Vector2(-PlotCenterX, -PlotCenterY); }
     }
 }

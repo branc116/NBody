@@ -1,4 +1,4 @@
-﻿namespace NBody.Gui.Attributes
+﻿namespace Nbody.Gui.Attributes
 {
     public class PropEditAttribute : System.Attribute
     {

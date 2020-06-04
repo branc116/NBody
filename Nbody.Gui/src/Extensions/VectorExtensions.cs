@@ -3,7 +3,7 @@ using MathNet.Numerics.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using static Godot.Mathf;
-using NBody.Gui.Core;
+using Nbody.Gui.Core;
 
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
@@ -15,11 +15,11 @@ using godot_real_t = System.Double;
 #else
 using godot_real_t = System.Single;
 #endif
-namespace NBody.Gui.Extensions
+namespace Nbody.Gui.Extensions
 {
     public static class VectorExtensions
     {
-        public static Vector3 ToV3(this NBody.Gui.Core.Point3 point)
+        public static Vector3 ToV3(this Nbody.Gui.Core.Point3 point)
         {
             return new Vector3((godot_real_t)point.x, (godot_real_t)point.y, (godot_real_t)point.z);
         }

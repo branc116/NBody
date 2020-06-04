@@ -1,22 +1,25 @@
 using Godot;
-using NBody.Gui.Attributes;
-using NBody.Gui.Extensions;
+using Nbody.Gui.Helpers;
+using Nbody.Gui.Attributes;
+using Nbody.Gui.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NBody.Gui
+namespace Nbody.Gui.Nodes.Controls
 {
     public class PropsEdit : GridContainer
     {
+        [Export]
+        public string PropGroup { get; set; }
         public override void _Ready()
         {
-            var name = this.Name;
+            var name = PropGroup ?? Name;
             var props = GetProps(typeof(SourceOfTruth), () => null, name).ToList();
             Console.WriteLine($"Number of pros: {props.Count}");
             foreach (var prop in props)
             {
-                this.AddChild(prop);
+                AddChild(prop);
             };
             //this.Columns = 4;
         }
@@ -33,22 +36,46 @@ namespace NBody.Gui
                 .SelectMany(i =>
                 {
                     var atr = i.GetCustomAttributes(typeof(PropEditAttribute), true).Cast<PropEditAttribute>().First();
-                    if (!i.FieldType.IsPrimitive && i.FieldType != typeof(string) && !i.FieldType.IsValueType)
-                    {
-                        return GetProps(i.FieldType, () => i.GetValue(obj()));
-                    }
+                    var isSimpleObservable = i.FieldType.Name == typeof(SimpleObservable<int>).Name;
 
                     var lable = new Label
                     {
                         Text = i.Name
                     };
-                    var input = i.FieldType == typeof(bool) ? new DynamicToggleButton(i, obj) as Control : new DynamicLineEdit(i, obj, atr.Editable) as Control;
+                    if (isSimpleObservable)
+                    {
+                        var internalType = i.FieldType.GenericTypeArguments[0];
+
+                        var ctr = i.GetValue(obj());
+                        if (ctr is SimpleObservable<bool> sw)
+                        {
+                            return new Control[] { lable, new DynamicToggleButtonObservable(sw) };
+                        }
+                        else if (ctr is null)
+                        {
+                            return new Control[] { };
+                        }
+                        else
+                        {
+                            var control = typeof(DynamicLineEdit<>)
+                                .MakeGenericType(internalType)
+                                .GetConstructor(new Type[] { ctr.GetType(), typeof(bool) })
+                                .Invoke(new object[] { ctr, atr.Editable }) as Control;
+                            return new Control[] { lable, control };
+                        }
+                    }
+                    if (!i.FieldType.IsPrimitive && i.FieldType != typeof(string) && !i.FieldType.IsValueType)
+                    {
+                        return GetProps(i.FieldType, () => i.GetValue(obj()));
+                    }
+
+                    Control input = i.FieldType switch
+                    {
+                        { } x when x == typeof(bool) => new DynamicToggleButton(i, obj),
+                        _ => new DynamicLineEdit(i, obj, atr.Editable)
+                    }; // == typeof(bool) ? new DynamicToggleButton(i, obj) as Control : new DynamicLineEdit(i, obj, atr.Editable) as Control;
                     return new Control[] { lable, input };
                 });
-        }
-        public override void _Process(float delta)
-        {
-
         }
     }
 }

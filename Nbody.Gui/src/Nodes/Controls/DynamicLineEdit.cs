@@ -1,14 +1,21 @@
-﻿using Godot;
+using Godot;
+using Nbody.Gui.Helpers;
 using System;
 using System.Reflection;
 
-namespace NBody.Gui
+namespace Nbody.Gui.Nodes.Controls
 {
     public class DynamicLineEdit : LineEdit
     {
         private readonly FieldInfo _fieldInfo;
         private readonly Func<object> _obj;
         private string _oldText;
+        public DynamicLineEdit()
+        {
+            _fieldInfo = null;
+            _obj = null;
+            _oldText = null;
+        }
         public DynamicLineEdit(FieldInfo fieldInfo, Func<object> obj, bool isEditable = true)
         {
             _fieldInfo = fieldInfo;
@@ -23,7 +30,7 @@ namespace NBody.Gui
         }
         private void PropToText()
         {
-            string newText = string.Empty;
+            var newText = string.Empty;
             if (_fieldInfo.IsStatic)
             {
                 newText = _fieldInfo.GetValue(null).ToString();
@@ -58,7 +65,7 @@ namespace NBody.Gui
         }
         public override void _Process(float delta)
         {
-            if (base.HasFocus())
+            if (HasFocus())
                 return;
             if (Editable && _oldText != Text)
             {
@@ -70,5 +77,54 @@ namespace NBody.Gui
             PropToText();
         }
 
+    }
+    public class DynamicLineEdit<T> : LineEdit
+    {
+        private readonly SimpleObservable<T> _observable;
+        private string _oldText;
+        public DynamicLineEdit(SimpleObservable<T> observable, bool isEditable = true)
+        {
+            _observable = observable;
+            Editable = isEditable;
+            SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
+            _observable.RegisterAftersetting(AfterChange);
+            AfterChange(_observable.Get);
+        }
+        ~DynamicLineEdit()
+        {
+            _observable.UnrgisterPost(AfterChange);
+        }
+        private void AfterChange(T val)
+        {
+            var newValue = val.ToString();
+            if (newValue != _oldText)
+            {
+                _oldText = newValue;
+                Text = newValue;
+            }
+        }
+        public void TextToProp()
+        {
+            if (_observable is SimpleObservable<string> strOb)
+            {
+                strOb.Set(Text);
+            }
+            var parsed = _observable.Parse(Text);
+            if (parsed is T ok)
+            {
+                _observable.Set(ok);
+            }
+        }
+        public override void _Process(float delta)
+        {
+            if (HasFocus())
+                return;
+            if (Editable && _oldText != Text)
+            {
+                _oldText = Text;
+                TextToProp();
+                return;
+            }
+        }
     }
 }

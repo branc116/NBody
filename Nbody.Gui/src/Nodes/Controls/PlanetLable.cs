@@ -1,7 +1,8 @@
 ﻿using Godot;
-using NBody.Core;
+using Nbody.Gui.Helpers;
+using Nbody.Core;
 
-namespace NBody.Gui
+namespace Nbody.Gui.Nodes.Controls
 {
     public class PlanetLable : Label, IPlanetFab
     {
@@ -10,16 +11,16 @@ namespace NBody.Gui
         public Node ControlledBy { get; set; }
         public PlanetLable(Planet planet, DisplayPlanetProperty displayPlanetProperty)
         {
-            this.Planet = planet;
-            this.ToDisplay = displayPlanetProperty;
+            Planet = planet;
+            ToDisplay = displayPlanetProperty;
             UpdateValue(-1);
         }
         public void UpdateValue(int index)
         {
-            this.Text = GetTextPrivate();
+            Text = GetTextPrivate();
             if (ControlledBy is ItemList il)
             {
-                il.SetItemText(index, this.Text);
+                il.SetItemText(index, Text);
             }
         }
         private string GetTextPrivate()

@@ -1,28 +1,41 @@
 ﻿using Godot;
-using NBody.Gui.InputModels;
-using NBody.Gui.src.Nodes.Controls;
-using NBody.Gui;
-using NBody.Gui.Extensions;
+using Nbody.Gui.InputModels;
+using Nbody.Gui.src.Nodes.Controls;
+using Nbody.Gui;
+using Nbody.Gui.Extensions;
 using System;
 using System.Linq;
 
-namespace NBody.Gui.Nodes.Controls
+namespace Nbody.Gui.Nodes.Controls
 {
     public class LinesDrawer : Node2D
     {
         private readonly PlotsModel _plotsModel = SourceOfTruth.PlotModel;
         private readonly FunctionsManager _functionsManager = new FunctionsManager();
         private Vector2[] _points;
+        private ShaderMaterial _material;
+
+        public override void _Ready()
+        {
+            _material = base.Material as ShaderMaterial;
+            _plotsModel.PlotCenterX.RegisterAftersetting(value => 
+                _material.SetShaderParam("center", _plotsModel.PlotCenter));
+            _plotsModel.PlotCenterY.RegisterAftersetting((val) => 
+                _material.SetShaderParam("center", _plotsModel.PlotCenter));
+            _plotsModel.PlotOffset.RegisterAftersetting(val =>
+                _material.SetShaderParam("offset", val));
+            _plotsModel.PlotWidth.RegisterAftersetting(val =>
+                _material.SetShaderParam("width", val));
+            _plotsModel.PlotResoultion.RegisterAftersetting(val =>
+                _material.SetShaderParam("resolution", val));
+            _plotsModel.PlotVisible.RegisterAftersetting(val =>
+                this.Visible = val);
+        }
         public override void _Process(float delta)
         {
             base._Process(delta);
             if (!_plotsModel.PlotVisible)
                 return;
-            var meteraial = base.Material as ShaderMaterial;
-            meteraial.SetShaderParam("center", _plotsModel.PlotCenter);
-            meteraial.SetShaderParam("offset", _plotsModel.PlotOffset);
-            meteraial.SetShaderParam("width", _plotsModel.PlotWidth);
-            meteraial.SetShaderParam("resolution", _plotsModel.PlotResoultion);
             if (_plotsModel.XLogScale || _plotsModel.YLogScale)
                 _points = _functionsManager.GetPoints()?.Select(i => new Vector2(_plotsModel.XLogScale ? Mathf.Log(i.x) : i.x, _plotsModel.YLogScale ? Mathf.Log(i.y) : i.y)).ToArray();
             else 
@@ -30,15 +43,15 @@ namespace NBody.Gui.Nodes.Controls
             if (_points != null && _points.Length > 2)
             {
                 var (min, max) = _points.GetMinMax();
-                _plotsModel.Min = min;
-                _plotsModel.Max = max;
+                _plotsModel.Min.Set(min);
+                _plotsModel.Max.Set(max);
                 if (_plotsModel.Follow)
                 {
                     var diff = max - min;
-                    _plotsModel.PlotWidth = Math.Max(diff.x * 1.5f, diff.y * 2f);
+                    _plotsModel.PlotWidth.Set(Math.Max(diff.x * 1.5f, diff.y * 2f));
                     var center = (min + max) / 2;
-                    _plotsModel.PlotCenterX = center.x;
-                    _plotsModel.PlotCenterY = center.y - _plotsModel.PlotWidth * 0.1f;
+                    _plotsModel.PlotCenterX.Set(center.x);
+                    _plotsModel.PlotCenterY.Set(center.y - _plotsModel.PlotWidth * 0.1f);
                 }
                 Update();
             }

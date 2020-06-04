@@ -1,7 +1,7 @@
 ﻿using Godot;
 using System;
 
-namespace NBody.Gui.src.Core
+namespace Nbody.Gui.src.Core
 {
     public struct Vector3Formatable : IEquatable<Vector3Formatable>, IFormattable
     {

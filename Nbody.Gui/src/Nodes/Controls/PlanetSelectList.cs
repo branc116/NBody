@@ -1,14 +1,14 @@
-﻿using Godot;
-using NBody.Gui.InputModels;
-using NBody.Core;
-using NBody.Gui;
-using NBody.Gui.Controllers;
-using NBody.Gui.InputModels;
+using Godot;
+using Nbody.Gui.InputModels;
+using Nbody.Core;
+using Nbody.Gui.Controllers;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Nbody.Gui.src.Extensions;
+using Nbody.Gui.Helpers;
 
-namespace NBody.Gui.Nodes.Controls
+namespace Nbody.Gui.Nodes.Controls
 {
     public class PlanetSelectList : ItemList
     {
@@ -19,8 +19,12 @@ namespace NBody.Gui.Nodes.Controls
 
         private int _lastSelected = -1;
         private DateTime _lastUpdated = DateTime.Now.AddDays(-1);
+        [Export]
+        public string PlanetListName { get; set; }
+
         public override void _Ready()
         {
+            SourceOfTruth.PlanetCollection.Add((PlanetListName ?? Name, new Nbody.Gui.Helpers.SimpleObservable<Planet[]>(new Planet[1])));
             base._Ready();
         }
         public new void AddChild(Node node, bool legibleuniquename = false)
@@ -36,10 +40,11 @@ namespace NBody.Gui.Nodes.Controls
             var arr = base.IsAnythingSelected() ? base.GetSelectedItems()
                     .Select(i => _planetFabController[i])
                     .ToArray() : Enumerable.Empty<Planet>().ToArray();
+            SourceOfTruth.PlanetCollection.Get(PlanetListName ?? Name).Set(arr);
             if (Name == "CreatorPlanetsList")
-                _planetCreatorModel.SelectedPlanets = arr;
+                _planetCreatorModel.SelectedPlanets.Set(arr);
             else if (Name == "PlotsPlanetsList")
-                _plotModel.SelectedPlanets = arr;
+                _plotModel.SelectedPlanets.Set(arr);
             else if (Name == "PlanetInfo" && arr.Length > 0)
                 _planetInfoModel.SelectedPlanet = arr[0];
 
@@ -61,5 +66,6 @@ namespace NBody.Gui.Nodes.Controls
             _planetFabController.UpdateExisiting(SourceOfTruth.System, this);
             
         }
+
     }
 }

@@ -6,7 +6,7 @@ using real_t = System.Double;
 using real_t = System.Single;
 #endif
 
-namespace NBody.Gui.Core
+namespace Nbody.Gui.Core
 {
     public static class MathReal
     {

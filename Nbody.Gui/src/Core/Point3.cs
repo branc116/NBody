@@ -1,4 +1,4 @@
-﻿using ILGPU.Util;
+using ILGPU.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using real_t = System.Double;
 using real_t = System.Single;
 #endif
 
-namespace NBody.Gui.Core
+namespace Nbody.Gui.Core
 {
     public readonly struct Point3 : IEquatable<Point3>, IEnumerable<real_t>
     {

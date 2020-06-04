@@ -1,12 +1,13 @@
 ﻿using Godot;
-using NBody.Gui.InputModels;
+using Nbody.Gui.Helpers;
+using Nbody.Gui.InputModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NBody.Gui.Nodes.Controls
+namespace Nbody.Gui.Nodes.Controls
 {
     public class PlanetCreatorFunctionList : ItemList
     {
@@ -19,7 +20,7 @@ namespace NBody.Gui.Nodes.Controls
         }
         public override void _Process(float delta)
         {
-            var numOfPlanetsSelected = _planetCreatorModel.SelectedPlanets?.Length ?? 0;
+            var numOfPlanetsSelected = _planetCreatorModel.SelectedPlanets?.Get?.Length ?? 0;
             if (this.IsAnythingSelected())
                 _planetCreatorModel.MethodSelected = this.GetItemText(this.GetSelectedItems().First());
             if (_lastNumerOfPlanetsSelected != numOfPlanetsSelected)

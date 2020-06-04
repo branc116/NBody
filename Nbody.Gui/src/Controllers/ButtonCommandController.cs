@@ -1,15 +1,15 @@
 ﻿using Godot;
-using NBody.Gui.src.Attributes;
-using NBody.Gui.Extensions;
+using Nbody.Gui.src.Attributes;
+using Nbody.Gui.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NBody.Gui.src.Controllers
+namespace Nbody.Gui.src.Controllers
 {
     public class ButtonCommandController
     {
-        private readonly Dictionary<string, Action<Node>> _commands;
+        private static readonly Dictionary<string, Action<Node>> _commands;
         public ButtonCommandController()
         {
             _commands = typeof(ButtonCommandController).Assembly.GetTypes()
@@ -42,6 +42,10 @@ namespace NBody.Gui.src.Controllers
         public void Do(string name, Node node)
         {
             _commands[name](node);
+        }
+        public static void DoStatic(string name)
+        {
+            _commands[name](default);
         }
     }
 }

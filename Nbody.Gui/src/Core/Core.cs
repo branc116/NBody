@@ -1,7 +1,7 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
-using NBody.Gui.Core;
-using NBody.Gui;
-using NBody.Gui.InputModels;
+using Nbody.Gui.Core;
+using Nbody.Gui;
+using Nbody.Gui.InputModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,12 +12,12 @@ using real_t = System.Double;
 using real_t = System.Single;
 #endif
 
-namespace NBody.Core
+namespace Nbody.Core
 {
     public class PlanetSystem
     {
         private readonly SimulationModel _simulationModel = SourceOfTruth.SimulationModel;
-        private readonly NBody.Gui.Kernels.NbodyClKernel _nbodyClKernel = SourceOfTruth.Kernel;
+        private readonly Nbody.Gui.Kernels.NbodyClKernel _nbodyClKernel = SourceOfTruth.Kernel;
         public List<Planet> Planets { get; set; }
         private int _lastStep = -1;
         private List<Point3> _oldPositions;
@@ -42,9 +42,9 @@ namespace NBody.Core
         }
 
         public real_t CurTime { get; private set; } = (real_t)0;
-        public bool SimulateColitions { get => _simulationModel.SimulateColitions; set => _simulationModel.SimulateColitions = value; }
-        public real_t GravitationalConstant { get => _simulationModel.GravitationalConstant; set => _simulationModel.GravitationalConstant = value; }
-        public real_t Dt { get => _simulationModel.DeltaTimePerStep; set => _simulationModel.DeltaTimePerStep = value; }
+        public bool SimulateColitions { get => _simulationModel.SimulateColitions; set => _simulationModel.SimulateColitions.Set(value); }
+        public real_t GravitationalConstant { get => _simulationModel.GravitationalConstant; set => _simulationModel.GravitationalConstant.Set(value); }
+        public real_t Dt { get => _simulationModel.DeltaTimePerStep; set => _simulationModel.DeltaTimePerStep.Set(value); }
         public DateTime PlanetNamesLastChanged { get; private set; } = DateTime.Now;
         public PlanetSystem()
         {
@@ -80,6 +80,8 @@ namespace NBody.Core
                     if (i1 == j)
                         continue;
                     var interacts = Planets[j];
+                    if (interacts.Mass == 0)
+                        continue;
                     var position = positions[j];
                     var n = planet.Position - position;
 
@@ -95,6 +97,7 @@ namespace NBody.Core
                 newPosition += newVelocity * dtps;
                 planet.Position = newPosition;
                 planet.Velocity = newVelocity;
+                planet.AfterUpdate();
             }
             if (_simulationModel.SimulateColitions && mergeNeedeed)
                 MergePlanets();
@@ -185,6 +188,10 @@ namespace NBody.Core
             }
             Planets.RemoveAll(i => planets.Select(j => j.Name).Contains(i.Name));
             PlanetNamesLastChanged = DateTime.Now;
+        }
+        public void ResetTime()
+        {
+            this.NStep = 0;
         }
     }
 }

@@ -1,7 +1,7 @@
 using Godot;
-using NBody.Gui.InputModels;
+using Nbody.Gui.InputModels;
 
-namespace NBody.Gui
+namespace Nbody.Gui.Nodes.Controls
 {
     public class DebugList : ItemList
     {
@@ -11,7 +11,7 @@ namespace NBody.Gui
         public override void _Process(float delta)
         {
             var system = SourceOfTruth.System;
-            if (system is null || !this.IsVisibleInTree())
+            if (system is null || !IsVisibleInTree())
                 return;
 
             Clear();

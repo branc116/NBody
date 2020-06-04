@@ -1,24 +1,21 @@
 using Godot;
-using NBody.Gui.Extensions;
-using NBody.Gui.InputModels;
+using Nbody.Gui.Extensions;
+using Nbody.Gui.InputModels;
 
-namespace NBody.Gui
+namespace Nbody.Gui
 {
     public class PlanetSystemArrowMultiMesh : MultiMeshInstance
     {
         private readonly VisualizationModel _visualizationModel = SourceOfTruth.VisualizationModel;
+        public override void _Ready()
+        {
+            _visualizationModel.ShowPlanetArrows.RegisterAftersetting(val => this.Visible = val);
+        }
 
         public override void _Process(float delta)
         {
-            if (!_visualizationModel.ShowPlanetArrows)
-            {
-                Visible = false;
+            if (!Visible)
                 return;
-            }
-            else
-            {
-                Visible = true;
-            }
 
             var system = SourceOfTruth.System;
             Multimesh.InstanceCount = system.Planets.Count;

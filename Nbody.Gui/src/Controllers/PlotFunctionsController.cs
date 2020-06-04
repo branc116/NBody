@@ -1,14 +1,14 @@
 ﻿using Godot;
-using NBody.Gui.Attributes;
-using NBody.Gui.InputModels;
-using NBody.Core;
-using NBody.Gui;
-using NBody.Gui.Extensions;
+using Nbody.Gui.Attributes;
+using Nbody.Gui.InputModels;
+using Nbody.Core;
+using Nbody.Gui;
+using Nbody.Gui.Extensions;
 using System;
 using System.Linq;
-using NBody.Gui.Core;
+using Nbody.Gui.Core;
 
-namespace NBody.Gui.Controllers
+namespace Nbody.Gui.Controllers
 {
     [PlotFunction]
     public class PlotFunctionsController
@@ -158,6 +158,36 @@ namespace NBody.Gui.Controllers
                 arr[n - i - 1] = point;
             }
             return arr;
+        }
+        public Vector2[] DriftFromLagrangeXY(Planet p1)
+        {
+            if (p1 is PlanetInLagrangePoint pilp)
+            {
+                var retArr = pilp.DistanceFromLPoint.Select(i => new Vector2((float)i.x, (float)i.y))
+                    .ToArray();
+                return retArr;
+            }
+            return Array.Empty<Vector2>();
+        }
+        public Vector2[] DriftFromLagrangeXZ(Planet p1)
+        {
+            if (p1 is PlanetInLagrangePoint pilp)
+            {
+                var retArr = pilp.DistanceFromLPoint.Select(i => new Vector2((float)i.x, (float)i.z))
+                    .ToArray();
+                return retArr;
+            }
+            return Array.Empty<Vector2>();
+        }
+        public Vector2[] DriftFromLagrangeYZ(Planet p1)
+        {
+            if (p1 is PlanetInLagrangePoint pilp)
+            {
+                var retArr = pilp.DistanceFromLPoint.Select(i => new Vector2((float)i.y, (float)i.z))
+                    .ToArray();
+                return retArr;
+            }
+            return Array.Empty<Vector2>();
         }
     }
 }

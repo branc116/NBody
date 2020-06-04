@@ -1,21 +1,21 @@
 {
-  "GravitationalConstant": 9.0,
+  "GravitationalConstant": 1.0,
   "Dt": 0.001,
   "StepsPerFrame":  100,
   "Planets": [
     {
       "Position": [ 0, 0, 0 ],
       "Velocity": [ 0, 0, 0 ],
-      "Mass": 10000,
+      "Mass": 100,
       "Radius": 5,
-      "Name": "Sun"
+      "Name": "Earth"
     },
     {
-      "Position": [ 200, 0, 0 ],
-      "Velocity": [ 0, 0, 21.224 ],
-      "Mass": 10,
-      "Radius": 1,
-      "Name": "Earth"
+      "Position": [ 100, 0, 0 ],
+      "Velocity": [ 0, 0, 1.00499 ],
+      "Mass": 1,
+      "Radius": 3,
+      "Name": "Moon"
     }
   ]
 }

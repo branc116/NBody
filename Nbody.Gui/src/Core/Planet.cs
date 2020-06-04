@@ -1,16 +1,16 @@
-﻿using NBody.Gui.Core;
-using NBody.Gui;
-using NBody.Gui.InputModels;
+﻿using Nbody.Gui.Core;
+using Nbody.Gui;
+using Nbody.Gui.InputModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NBody.Gui.Extensions;
+using Nbody.Gui.Extensions;
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
 using real_t = System.Single;
 #endif
-namespace NBody.Core
+namespace Nbody.Core
 {
     public class Planet
     {
@@ -180,6 +180,10 @@ namespace NBody.Core
         public virtual Point3 InternalAcceleration(bool recalculate, real_t dt)
         {
             return Point3.Zero;
+        }
+        public virtual void AfterUpdate()
+        {
+            return;
         }
     }
     

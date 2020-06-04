@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NBody.Gui.src.Attributes
+namespace Nbody.Gui.src.Attributes
 {
     public class ButtonCommandAttribute : Attribute
     {

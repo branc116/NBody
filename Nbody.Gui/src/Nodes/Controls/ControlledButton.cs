@@ -1,7 +1,7 @@
 ﻿using Godot;
-using NBody.Gui.src.Controllers;
+using Nbody.Gui.src.Controllers;
 
-namespace NBody.Gui.src.Nodes.Controls
+namespace Nbody.Gui.Nodes.Controls
 {
     public class ControlledButton : Button
     {
@@ -15,7 +15,7 @@ namespace NBody.Gui.src.Nodes.Controls
         public override void _Pressed()
         {
             base._Pressed();
-            _buttonCommandController.Do(this.Name, this);
+            _buttonCommandController.Do(Name, this);
         }
     }
 }

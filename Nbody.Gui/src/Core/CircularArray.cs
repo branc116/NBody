@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace NBody.Core
+namespace Nbody.Core
 {
     public class CircularArray<T> : IEnumerable<T>
     {

@@ -1,11 +1,12 @@
-﻿using NBody.Gui.Attributes;
+﻿using Nbody.Gui.Helpers;
+using Nbody.Gui.Attributes;
 
-namespace NBody.Gui.InputModels
+namespace Nbody.Gui.InputModels
 {
     public class VisualizationModel
     {
         [PropEdit]
-        public bool ShowPlanetArrows = true;
+        public SimpleObservable<bool> ShowPlanetArrows = true;
         public bool IsDebugShown = false;
     }
 }

@@ -1,11 +1,12 @@
-﻿using NBody.Core;
+﻿using Nbody.Gui.Helpers;
+using Nbody.Core;
 using System;
 
-namespace NBody.Gui.InputModels
+namespace Nbody.Gui.InputModels
 {
     public class PlanetCreatorModel
     {
-        public Planet[] SelectedPlanets { get; set; }
+        public SimpleObservable<Planet[]> SelectedPlanets { get; } = new SimpleObservable<Planet[]>(null);
         public Action DoIt { get; set; }
         public string MethodSelected { get; set; }
     }
