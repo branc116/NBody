@@ -88,6 +88,7 @@
     <Compile Include="src\Controllers\TestingLagrangeManufolds.cs" />
     <Compile Include="src\Core\CircularArray.cs" />
     <Compile Include="src\Core\Core.cs" />
+    <Compile Include="src\Core\L2Calculation.cs" />
     <Compile Include="src\Core\MathReal.cs" />
     <Compile Include="src\Core\Planet.cs" />
     <Compile Include="src\Core\PlanetInLagrangePoint.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="src\Nodes\Spatials\PlanetSystemArrowMultiMesh.cs" />
     <Compile Include="src\Nodes\Spatials\PlanetSystemMultyMesh.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Solvers\SolveL2InitialConditions.cs" />
     <Compile Include="src\SourceOfTruth.cs" />
   </ItemGroup>
   <ItemGroup>

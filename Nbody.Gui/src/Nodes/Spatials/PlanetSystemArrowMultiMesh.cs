@@ -1,5 +1,7 @@
 using Godot;
+using Nbody.Core;
 using Nbody.Gui.Extensions;
+using Nbody.Gui.Helpers;
 using Nbody.Gui.InputModels;
 
 namespace Nbody.Gui
@@ -7,6 +9,8 @@ namespace Nbody.Gui
     public class PlanetSystemArrowMultiMesh : MultiMeshInstance
     {
         private readonly VisualizationModel _visualizationModel = SourceOfTruth.VisualizationModel;
+        private readonly SimpleObservable<PlanetSystem> _system = SourceOfTruth.System;
+
         public override void _Ready()
         {
             _visualizationModel.ShowPlanetArrows.RegisterAftersetting(val => this.Visible = val);
@@ -17,7 +21,7 @@ namespace Nbody.Gui
             if (!Visible)
                 return;
 
-            var system = SourceOfTruth.System;
+            var system = _system.Get;
             Multimesh.InstanceCount = system.Planets.Count;
             for (int i = 0; i < system.Planets.Count; i++)
             {

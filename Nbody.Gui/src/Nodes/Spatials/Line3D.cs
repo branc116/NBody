@@ -18,7 +18,7 @@ namespace Nbody.Gui.Nodes.Spatials
             var planet = SourceOfTruth.PlanetInfoModel.SelectedPlanet;
             if (planet is null)
                 return;
-            var arr = planet.PositionHistory.ToArray();
+            var arr = planet.GetTracePoints().ToArray();
             Multimesh.InstanceCount = arr.Length;
             for(int i =0;i<arr.Length;i++)
             {

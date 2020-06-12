@@ -16,7 +16,7 @@ namespace Nbody.Gui.Nodes.Controls
         private readonly PlotsModel _plotModel = SourceOfTruth.PlotModel;
         private readonly PlanetCreatorModel _planetCreatorModel = SourceOfTruth.PlanetCreatorModel;
         private readonly PlanetInfoModel _planetInfoModel = SourceOfTruth.PlanetInfoModel;
-
+        private readonly SimpleObservable<PlanetSystem> _planetSystem = SourceOfTruth.System;
         private int _lastSelected = -1;
         private DateTime _lastUpdated = DateTime.Now.AddDays(-1);
         [Export]
@@ -48,12 +48,12 @@ namespace Nbody.Gui.Nodes.Controls
             else if (Name == "PlanetInfo" && arr.Length > 0)
                 _planetInfoModel.SelectedPlanet = arr[0];
 
-            var lastchange = SourceOfTruth.System.PlanetNamesLastChanged;
+            var lastchange = _planetSystem.Get.PlanetNamesLastChanged;
             if (_lastUpdated >= lastchange)
                 return;
             _lastUpdated = lastchange;
-            _planetFabController.DeleteOld(SourceOfTruth.System, this);
-            _planetFabController.AddNew(SourceOfTruth.System, this, (planet) =>
+            _planetFabController.DeleteOld(SourceOfTruth.System.Get, this);
+            _planetFabController.AddNew(SourceOfTruth.System.Get, this, (planet) =>
             {
                 return new List<IPlanetFab>()
                 {
@@ -63,7 +63,7 @@ namespace Nbody.Gui.Nodes.Controls
                     }
                 };
             });
-            _planetFabController.UpdateExisiting(SourceOfTruth.System, this);
+            _planetFabController.UpdateExisiting(SourceOfTruth.System.Get, this);
             
         }
 

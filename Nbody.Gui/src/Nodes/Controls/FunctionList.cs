@@ -2,6 +2,8 @@
 using Nbody.Gui.InputModels;
 using Nbody.Gui;
 using System.Linq;
+using Nbody.Gui.Nodes.Controls;
+using Nbody.Gui.Helpers;
 
 namespace Nbody.Gui.src.Nodes.Controls
 {

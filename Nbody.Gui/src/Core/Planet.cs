@@ -143,7 +143,7 @@ namespace Nbody.Core
 
         public real_t GetCircularOrbitSpeed(real_t mass, real_t distance)
         {
-            return MathReal.Sqrt(SourceOfTruth.System.GravitationalConstant * (Mass + mass) / distance);
+            return MathReal.Sqrt(SourceOfTruth.System.Get.GravitationalConstant * (Mass + mass) / distance);
         }
         public Point3 GetNullVelocity(Planet smallerPlanet, Point3 position)
         {
@@ -184,6 +184,10 @@ namespace Nbody.Core
         public virtual void AfterUpdate()
         {
             return;
+        }
+        public virtual IEnumerable<Point3> GetTracePoints()
+        {
+            return PositionHistory.ToList();
         }
     }
     

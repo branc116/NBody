@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System;
+using MathNet.Numerics;
+using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
 #if REAL_T_IS_DOUBLE
 using real_t = System.Double;
 #else
@@ -14,6 +17,12 @@ using real_t = System.Single;
 
 namespace Nbody.Core
 {
+    public enum Direction
+    {
+        X = 0,
+        Y = 1,
+        Z = 2
+    }
     public class PlanetSystem
     {
         private readonly SimulationModel _simulationModel = SourceOfTruth.SimulationModel;
@@ -65,7 +74,7 @@ namespace Nbody.Core
         public PlanetSystem Step()
         {
             var mergeNeedeed = false;
-            var positions = Positions;
+            var positions = Positions.Select((p, i) => (p, i)).Where(i => Planets[i.i].Mass != 0).ToArray();
             var dtps = _simulationModel.DeltaTimePerStep;
             var G = _simulationModel.GravitationalConstant;
             var doPid = NStep % _simulationModel.DoPidEveryStep == 0;
@@ -75,14 +84,15 @@ namespace Nbody.Core
                 var newPosition = planet.Position;
                 var newVelocity = planet.Velocity;
 
-                for (var j = 0; j < positions.Count; j++)
+                for (var index = 0; index < positions.Length; index++)
                 {
+                    var j = positions[index].i;
                     if (i1 == j)
                         continue;
                     var interacts = Planets[j];
                     if (interacts.Mass == 0)
                         continue;
-                    var position = positions[j];
+                    var position = positions[index].p;
                     var n = planet.Position - position;
 
                     var norm = (real_t)n.LengthSquared();
@@ -104,6 +114,27 @@ namespace Nbody.Core
             NStep++;
             CurTime += dtps;
             return this;
+        }
+        public Point3 A(Point3 point)
+        {
+            var planets = Planets.Where(i => i.Mass != 0);
+            var cur = Point3.Zero;
+            foreach (var planet in planets)
+            {
+                cur += _simulationModel.GravitationalConstant * planet.Mass / planet.Position.DistanceSquaredTo(point) * planet.Position.Normalized();
+            }
+            return cur;
+        }
+        public Point3 DAD(Direction d, Point3 point)
+        {
+            var val = 10e-7;
+            var v = d switch {
+                { } dir when dir == Direction.X => new Point3(val, 0, 0),
+                { } dir when dir == Direction.Y => new Point3(0, val, 0),
+                { } dir when dir == Direction.Z => new Point3(0, 0, val),
+                _ => Point3.Zero
+            };
+            return ((A(point + v) - A(point)) / val);
         }
 
         internal void ClearPlanets()

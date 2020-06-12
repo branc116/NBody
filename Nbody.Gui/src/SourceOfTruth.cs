@@ -9,7 +9,7 @@ namespace Nbody.Gui
 {
     public static class SourceOfTruth
     {
-        public static PlanetSystem System;
+        public readonly static SimpleObservable<PlanetSystem> System = new SimpleObservable<PlanetSystem>(default);
         [PropEdit("DebugProps")]
         public readonly static VisualizationModel VisualizationModel = new VisualizationModel();
         [PropEdit("DebugProps")]

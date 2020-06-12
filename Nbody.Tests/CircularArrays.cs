@@ -11,7 +11,7 @@ namespace Nbody.Tests
         [TestMethod]
         public void CurcularArray_NoOverflow()
         {
-            var a = new CircularArray<int>(10);
+            var a = new CircularArray<int>(10, 1);
             Enumerable.Range(0, 9).ToList().ForEach(i => a.Add(i));
             Assert.AreEqual(9, a.Position);
             Assert.AreEqual(9, a.Count());
@@ -26,7 +26,7 @@ namespace Nbody.Tests
         [TestMethod]
         public void CurcularArray_Overflow()
         {
-            var a = new CircularArray<int>(10);
+            var a = new CircularArray<int>(10, 1);
             Enumerable.Range(0, 11).ToList().ForEach(i => a.Add(i));
             Assert.AreEqual(1, a.Position);
             Assert.AreEqual(11, a.Length);
@@ -42,7 +42,7 @@ namespace Nbody.Tests
         [TestMethod]
         public void CurcularArray_Last()
         {
-            var a = new CircularArray<int>(10);
+            var a = new CircularArray<int>(10, 1);
             Enumerable.Range(0, 10).ToList().ForEach(i => a.Add(i));
             Assert.AreEqual(9, a.Last());
             a.Add(10);
@@ -56,7 +56,7 @@ namespace Nbody.Tests
         [TestMethod]
         public void CurcularArray_Clear()
         {
-            var a = new CircularArray<int>(10);
+            var a = new CircularArray<int>(10, 1);
             Enumerable.Range(0, 10).ToList().ForEach(i => a.Add(i));
             Assert.AreEqual(9, a.Last());
             a.Clear();
@@ -65,7 +65,7 @@ namespace Nbody.Tests
         [TestMethod]
         public void CurcularArray_Reverse()
         {
-            var a = new CircularArray<int>(10);
+            var a = new CircularArray<int>(10, 1);
             Enumerable.Range(0, 10).ToList().ForEach(i => a.Add(i));
             var reversed = a.Reverse().ToList();
             Assert.AreEqual(0, reversed.Last());
@@ -76,7 +76,7 @@ namespace Nbody.Tests
         [TestMethod]
         public void CurcularArray_ReverseOverflow()
         {
-            var a = new CircularArray<int>(10);
+            var a = new CircularArray<int>(10, 1);
             Enumerable.Range(0, 11).ToList().ForEach(i => a.Add(i));
             var reversed = a.Reverse().ToList();
             Assert.AreEqual(1, reversed.Last());
@@ -87,7 +87,7 @@ namespace Nbody.Tests
         [TestMethod]
         public void CurcularArray_RemoveLast()
         {
-            var a = new CircularArray<int>(10);
+            var a = new CircularArray<int>(10, 1);
             Enumerable.Range(0, 11).ToList().ForEach(i => a.Add(i));
             a.RemoveLast();
             a.RemoveLast();

@@ -1,6 +1,7 @@
 using Godot;
 using Nbody.Core;
 using Nbody.Gui.Extensions;
+using Nbody.Gui.Helpers;
 using Nbody.Gui.InputModels;
 
 namespace Nbody.Gui.Nodes.Spatials
@@ -10,6 +11,7 @@ namespace Nbody.Gui.Nodes.Spatials
         private readonly SimulationModel _simulationModel = SourceOfTruth.SimulationModel;
         private Spatial _arrowSpatial;
         private Spatial _globalArrow;
+        private readonly SimpleObservable<PlanetSystem> _system = SourceOfTruth.System;
         public Nbody()
         {
             _simulationModel.RestartRequested.RegisterAftersetting(val =>
@@ -31,8 +33,8 @@ namespace Nbody.Gui.Nodes.Spatials
             AddChild(_globalArrow);
             var inputModel = PlanetSystemInputModel
                 .LoadFromFile(_simulationModel.InputFile);
-            Gui.SourceOfTruth.System = inputModel
-                ?.ToPlanetSystem() ?? new PlanetSystem();
+            _system.Set(inputModel
+                ?.ToPlanetSystem() ?? new PlanetSystem());
             
         }
         public override void _UnhandledKeyInput(InputEventKey @event)
@@ -47,11 +49,11 @@ namespace Nbody.Gui.Nodes.Spatials
         }
         public override void _Process(float delta)
         {
-            int times = _simulationModel.StepsPerFrame;
-            var system = SourceOfTruth.System;
+            int times = _simulationModel.StepsPerFrame.Get;
+            var system = _system.Get;
             if (!_simulationModel.Paused)
             {
-                if (_simulationModel.UseOpenCl)
+                if (_simulationModel.UseOpenCl.Get)
                     system.StepCL(times);
                 else
                     system.Step(times);

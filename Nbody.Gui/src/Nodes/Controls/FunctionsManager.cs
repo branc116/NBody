@@ -2,18 +2,18 @@
 using Nbody.Gui.Attributes;
 using Nbody.Gui.InputModels;
 using Nbody.Core;
-using Nbody.Gui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nbody.Gui.Helpers;
 
-namespace Nbody.Gui.src.Nodes.Controls
+namespace Nbody.Gui.Nodes.Controls
 {
     public class FunctionsManager
     {
         private static readonly PlotsModel _plotsModel = SourceOfTruth.PlotModel;
         private readonly Dictionary<int, Dictionary<string, Func<Planet[], Vector2[]>>> _dict;
-
+        private readonly SimpleObservable<PlanetSystem> _system = SourceOfTruth.System;
         public FunctionsManager()
         {
             _dict = typeof(FunctionsManager).Assembly.GetTypes().Where(i => i.CustomAttributes.Any(j => j.AttributeType == typeof(PlotFunctionAttribute)))
@@ -51,11 +51,11 @@ namespace Nbody.Gui.src.Nodes.Controls
                 return null;
             if (_dict.ContainsKey(selectdPlanets.Get.Length) && _dict[selectdPlanets.Get.Length].ContainsKey(_plotsModel.SelectedFunc))
             {
-                return _dict[selectdPlanets.Get.Length][selectedFunc](selectdPlanets);
+                return _dict[selectdPlanets.Get.Length][selectedFunc](selectdPlanets.Get);
             }
             if (_dict.ContainsKey(-1) && _dict[-1].ContainsKey(_plotsModel.SelectedFunc))
             {
-                return _dict[-1][selectedFunc](selectdPlanets);
+                return _dict[-1][selectedFunc](selectdPlanets.Get);
             }
             return null;
         }

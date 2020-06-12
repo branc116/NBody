@@ -1,6 +1,5 @@
 ﻿using Godot;
 using Nbody.Gui.InputModels;
-using Nbody.Gui.src.Nodes.Controls;
 using Nbody.Gui;
 using Nbody.Gui.Extensions;
 using System;
@@ -34,10 +33,10 @@ namespace Nbody.Gui.Nodes.Controls
         public override void _Process(float delta)
         {
             base._Process(delta);
-            if (!_plotsModel.PlotVisible)
+            if (!_plotsModel.PlotVisible.Get)
                 return;
-            if (_plotsModel.XLogScale || _plotsModel.YLogScale)
-                _points = _functionsManager.GetPoints()?.Select(i => new Vector2(_plotsModel.XLogScale ? Mathf.Log(i.x) : i.x, _plotsModel.YLogScale ? Mathf.Log(i.y) : i.y)).ToArray();
+            if (_plotsModel.XLogScale.Get || _plotsModel.YLogScale.Get)
+                _points = _functionsManager.GetPoints()?.Select(i => new Vector2(_plotsModel.XLogScale.Get ? Mathf.Log(i.x) : i.x, _plotsModel.YLogScale.Get ? Mathf.Log(i.y) : i.y)).ToArray();
             else 
                 _points = _functionsManager.GetPoints();
             if (_points != null && _points.Length > 2)
@@ -45,13 +44,13 @@ namespace Nbody.Gui.Nodes.Controls
                 var (min, max) = _points.GetMinMax();
                 _plotsModel.Min.Set(min);
                 _plotsModel.Max.Set(max);
-                if (_plotsModel.Follow)
+                if (_plotsModel.Follow.Get)
                 {
                     var diff = max - min;
                     _plotsModel.PlotWidth.Set(Math.Max(diff.x * 1.5f, diff.y * 2f));
                     var center = (min + max) / 2;
                     _plotsModel.PlotCenterX.Set(center.x);
-                    _plotsModel.PlotCenterY.Set(center.y - _plotsModel.PlotWidth * 0.1f);
+                    _plotsModel.PlotCenterY.Set(center.y - _plotsModel.PlotWidth.Get * 0.1f);
                 }
                 Update();
             }

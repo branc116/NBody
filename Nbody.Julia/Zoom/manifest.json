@@ -1,0 +1,14 @@
+{
+    "name": "Zoom",
+    "version": "1.0",
+    "description": "Zoom plotly!",
+    "background": {
+      "scripts": ["zoom.js"],
+      "persistent": false
+    },
+    "manifest_version": 2,
+    "page_action": {
+        "default_title": "ZOOM",
+        "default_popup": "zoom.html"
+    }
+  }

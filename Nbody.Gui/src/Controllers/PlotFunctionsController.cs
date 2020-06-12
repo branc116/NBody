@@ -7,6 +7,7 @@ using Nbody.Gui.Extensions;
 using System;
 using System.Linq;
 using Nbody.Gui.Core;
+using Newtonsoft.Json.Schema;
 
 namespace Nbody.Gui.Controllers
 {
@@ -186,6 +187,41 @@ namespace Nbody.Gui.Controllers
                 var retArr = pilp.DistanceFromLPoint.Select(i => new Vector2((float)i.y, (float)i.z))
                     .ToArray();
                 return retArr;
+            }
+            return Array.Empty<Vector2>();
+        }
+        public Vector2[] ErrorLgrangeIntegral(Planet p1)
+        {
+            if (p1 is PlanetInLagrangePoint pilp)
+            {
+                var curSum = Point3.Zero;
+                var errors = pilp.DistanceFromLPoint.ToArray();
+                var dt = SourceOfTruth.SimulationModel.DeltaTimePerStep;
+                return errors.Select((cur, i) =>
+                {
+                    curSum += cur * dt;
+                    return new Vector2((float)i, (float)curSum.DistanceSquaredTo(Point3.Zero)/1000);
+                }).ToArray();
+            }
+            return Array.Empty<Vector2>();
+        }
+        public Vector2[] DirectionChangesPosition(Planet p1)
+        {
+            if (p1 is PlanetInLagrangePoint pilp)
+            {
+                var curSum = Point3.Zero;
+                var errors = pilp.VelocityChanges.ToArray();
+                return errors.Select(i => new Vector2((float)i.time, (float)i.distanceToLPoint.Length())).ToArray();
+            }
+            return Array.Empty<Vector2>();
+        }
+        public Vector2[] DirectionChangesSpeedY(Planet p1)
+        {
+            if (p1 is PlanetInLagrangePoint pilp)
+            {
+                var curSum = Point3.Zero;
+                var errors = pilp.VelocityChanges.ToArray();
+                return errors.Select(i => new Vector2((float)i.time, (float)i.velocityRelativeToLPoint.Length())).ToArray();
             }
             return Array.Empty<Vector2>();
         }

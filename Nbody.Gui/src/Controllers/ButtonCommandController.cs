@@ -9,7 +9,7 @@ namespace Nbody.Gui.src.Controllers
 {
     public class ButtonCommandController
     {
-        private static readonly Dictionary<string, Action<Node>> _commands;
+        private static Dictionary<string, Action<Node>> _commands;
         public ButtonCommandController()
         {
             _commands = typeof(ButtonCommandController).Assembly.GetTypes()

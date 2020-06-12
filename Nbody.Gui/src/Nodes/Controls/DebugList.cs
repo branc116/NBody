@@ -1,4 +1,6 @@
 using Godot;
+using Nbody.Core;
+using Nbody.Gui.Helpers;
 using Nbody.Gui.InputModels;
 
 namespace Nbody.Gui.Nodes.Controls
@@ -7,10 +9,10 @@ namespace Nbody.Gui.Nodes.Controls
     {
         private readonly VisualizationModel _visualizationModel = SourceOfTruth.VisualizationModel;
         private readonly SimulationModel _simulationModel = SourceOfTruth.SimulationModel;
-
+        private readonly SimpleObservable<PlanetSystem> _system = SourceOfTruth.System;
         public override void _Process(float delta)
         {
-            var system = SourceOfTruth.System;
+            var system = _system.Get;
             if (system is null || !IsVisibleInTree())
                 return;
 

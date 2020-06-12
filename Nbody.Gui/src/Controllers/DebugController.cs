@@ -2,6 +2,8 @@
 using Nbody.Gui.src.Attributes;
 using Nbody.Gui;
 using Nbody.Gui.InputModels;
+using Nbody.Gui.Helpers;
+using Nbody.Core;
 
 namespace Nbody.Gui.src.Controllers
 {
@@ -11,6 +13,8 @@ namespace Nbody.Gui.src.Controllers
         private readonly SimulationModel _simulationModel = SourceOfTruth.SimulationModel;
         private readonly VisualizationModel _visualizationModel = SourceOfTruth.VisualizationModel;
         private readonly PlanetCreatorModel _planetCreatorModel = SourceOfTruth.PlanetCreatorModel;
+        private readonly SimpleObservable<PlanetSystem> _system = SourceOfTruth.System;
+
         public void Restart(Node node)
         {
             _simulationModel.RestartRequested.Set(true);
@@ -27,11 +31,11 @@ namespace Nbody.Gui.src.Controllers
         }
         public void Step(Node node)
         {
-            SourceOfTruth.System.Step();
+            _system.Get.Step();
         }
         public void NSteps(Node node)
         {
-            SourceOfTruth.System.Step(_simulationModel.StepsPerFrame);
+            _system.Get.Step(_simulationModel.StepsPerFrame);
         }
         [ButtonCommand(Name = "Open")]
         public void OpenFileDialog(Node node)

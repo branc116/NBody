@@ -1,14 +1,18 @@
 using Godot;
+using Nbody.Core;
 using Nbody.Gui.Core;
 using Nbody.Gui.Extensions;
+using Nbody.Gui.Helpers;
+
 namespace Nbody.Gui
 {
     public class PlanetSystemMultyMesh : MultiMeshInstance
     {
+        private readonly SimpleObservable<PlanetSystem> _system = SourceOfTruth.System;
 
         public override void _Process(float delta)
         {
-            var system = SourceOfTruth.System;
+            var system = _system.Get;
             Multimesh.InstanceCount = system.Planets.Count;
             for (int i = 0; i < system.Planets.Count; i++)
             {

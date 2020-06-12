@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nbody.Gui.Helpers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,22 +7,41 @@ namespace Nbody.Core
 {
     public class CircularArray<T> : IEnumerable<T>
     {
-        private readonly T[] _coll;
+        private T[] _coll;
         private int _position;
         private int _positionRead;
-        private readonly int _max;
-        private readonly int _rememberEvery;
+        private int _max;
+        private int _rememberEvery;
         private int _lenght;
         private int _mod;
         public int Position => _position;
         public int Length => _lenght;
         public int Count => Math.Min(_lenght, _max);
-        public CircularArray(int N, int rememberEvery = 1)
+        public CircularArray(SimpleObservable<int> N, SimpleObservable<int> rememberEvery)
         {
-            _coll = new T[N];
+            _coll = new T[N.Get];
             _position = _positionRead = _lenght = 0;
-            _max = N;
-            _rememberEvery = rememberEvery;
+            _max = N.Get == 0 ? N.Set(1) : N.Get;
+            _rememberEvery = rememberEvery.Get;
+            N.RegisterAftersetting(i =>
+            {
+                var arr = new T[i];
+                var span = arr.AsSpan();
+                _coll.AsSpan(0, Math.Min(arr.Length, _coll.Length)).CopyTo(span);
+                _position %= i;
+                _positionRead %= i;
+                _max = i;
+                _coll = arr;
+            });
+            rememberEvery.RegisterAftersetting(AlterRememberEvery);
+        }
+        ~CircularArray()
+        {
+            _coll = null;
+        }
+        private void AlterRememberEvery(int i)
+        {
+            _rememberEvery = i;
         }
         public void Add(T item)
         {

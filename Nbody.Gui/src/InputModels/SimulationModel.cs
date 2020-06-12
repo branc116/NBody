@@ -11,21 +11,23 @@ namespace Nbody.Gui.InputModels
     public class SimulationModel
     {
         [PropEdit]
-        public readonly SimpleObservable<int> StepsPerFrame = 100;
+        public readonly SimpleObservable<int> StepsPerFrame = 10;
         [PropEdit]
         public readonly SimpleObservable<int> MaxHistoy = 10000;
         [PropEdit]
-        public readonly SimpleObservable<int> RememberEvery = 100;
+        public readonly SimpleObservable<int> RememberEvery = 10;
         [PropEdit]
-        public readonly SimpleObservable<real_t> DeltaTimePerStep = (real_t)0.001;
+        public readonly SimpleObservable<real_t> DeltaTimePerStep = (real_t)0.1;
         [PropEdit]
         public readonly SimpleObservable<bool> SimulateColitions = false;
         [PropEdit]
-        public readonly SimpleObservable<real_t> GravitationalConstant = (real_t)0.1;
+        public readonly SimpleObservable<real_t> GravitationalConstant = (real_t)1;
         [PropEdit]
         public readonly SimpleObservable<bool> UseOpenCl = false;
         [PropEdit]
         public readonly SimpleObservable<int> DoPidEveryStep = 10;
+        [PropEdit]
+        public readonly SimpleObservable<bool> RegressionStopOnTime = false;
         public string InputFile = "PlanetSystem.json";
         public readonly  SimpleObservable<bool> RestartRequested = false;
         public readonly SimpleObservable<bool> ShowOpenPlanetSystemDialog = false;
